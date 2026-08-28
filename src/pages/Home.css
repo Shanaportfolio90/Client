@@ -1,0 +1,163 @@
+.home-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  overflow-x: hidden;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+.home-wrapper.light-mode {
+  background-color: #F7F5EE;
+  color: #1C1917;
+}
+
+.home-wrapper.dark-mode {
+  background-color: #12100E;
+  color: #F5F5F4;
+}
+
+.bg-grid-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dark-mode .bg-grid-overlay {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+.hero-main-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 10px 24px 0px;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-header-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.hero-content-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr 280px;
+  align-items: end;
+  gap: 20px;
+  min-height: 520px;
+}
+
+/* Left Column Styling */
+.hero-left-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding-bottom: 24px;
+}
+
+.left-column-top {
+  margin-top: 40px;
+}
+
+.left-column-bottom {
+  margin-top: 60px;
+}
+
+/* Center Column Styling */
+.hero-center-column {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+/* Right Column Styling */
+.hero-right-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 100%;
+  padding-bottom: 24px;
+}
+
+.right-column-badge {
+  width: 100%;
+}
+
+.right-column-quote {
+  margin-top: 20px;
+}
+
+.right-column-tags {
+  margin-top: 40px;
+}
+
+/* Dark mode overwrites for text */
+.dark-mode .text-dark {
+  color: #FFFFFF;
+}
+
+.dark-mode .hero-subheading {
+  color: #A8A29E;
+}
+
+.dark-mode .social-label {
+  color: #A8A29E;
+}
+
+.dark-mode .dark-text {
+  color: #FFFFFF;
+}
+
+.dark-mode .reviews-subtext {
+  color: #A8A29E;
+}
+
+.dark-mode .quote-text {
+  color: #D6D3D1;
+}
+
+.dark-mode .hero-badge {
+  background-color: rgba(30, 24, 20, 0.9);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .badge-text {
+  color: #F5F5F4;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 1024px) {
+  .hero-content-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .hero-left-column,
+  .hero-right-column {
+    align-items: center;
+    text-align: center;
+  }
+
+  .hero-right-column {
+    align-items: center;
+  }
+
+  .right-column-badge {
+    display: flex;
+    justify-content: center;
+  }
+}

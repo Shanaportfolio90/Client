@@ -1,0 +1,50 @@
+.hero-title-container {
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 10;
+}
+
+.hero-headline {
+  font-size: 64px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+  margin: 0 0 10px 0;
+  display: inline-block;
+  position: relative;
+}
+
+.text-dark {
+  color: #1C1917;
+}
+
+.text-highlight {
+  color: #FF9F1C;
+  position: relative;
+  display: inline-block;
+}
+
+.leaf-icon {
+  position: absolute;
+  top: -12px;
+  right: -24px;
+  display: inline-flex;
+}
+
+.hero-subheading {
+  font-size: 20px;
+  color: #57534E;
+  font-weight: 400;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+@media (max-width: 768px) {
+  .hero-headline {
+    font-size: 42px;
+  }
+  .hero-subheading {
+    font-size: 16px;
+  }
+}

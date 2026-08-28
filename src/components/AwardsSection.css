@@ -1,0 +1,249 @@
+.awards-section-container {
+  width: 100%;
+  background-color: #191412;
+  color: #FFFFFF;
+  padding: 100px 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.awards-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+
+/* Section Header */
+.awards-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: flex-end;
+  gap: 40px;
+}
+
+.awards-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.awards-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge-circles {
+  display: flex;
+  align-items: center;
+}
+
+.circle-white {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+}
+
+.circle-orange {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: #FF9F1C;
+  margin-left: -5px;
+}
+
+.badge-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #D6D3D1;
+}
+
+.awards-title {
+  font-size: 52px;
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: -1.5px;
+  line-height: 1.15;
+  margin: 0;
+  position: relative;
+}
+
+.awards-title .highlight-text {
+  color: #FF9F1C;
+}
+
+.awards-title .leaf-icon {
+  display: inline-flex;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.awards-header-description {
+  font-size: 18px;
+  line-height: 1.6;
+  color: #A8A29E;
+  margin: 0;
+  max-width: 520px;
+}
+
+/* Awards Cards Grid (3 Columns) */
+.awards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  width: 100%;
+}
+
+/* Polygon Chamfered Card Notch Container */
+.award-card {
+  background-color: #231E1B;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 28px;
+  padding: 32px 28px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  clip-path: polygon(
+    0 0,
+    92% 0,
+    100% 24px,
+    100% 100%,
+    0 100%,
+    0 0
+  );
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.award-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 159, 28, 0.3);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+
+.award-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* Laurel Wreath Emblem */
+.laurel-wreath-emblem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+}
+
+.stars-row {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 13px;
+  color: #FF9F1C;
+  margin-bottom: 8px;
+}
+
+.emblem-center-text {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #FFFFFF;
+  max-width: 110px;
+  line-height: 1.35;
+  margin-bottom: 6px;
+}
+
+.laurel-svg {
+  margin: 2px 0;
+}
+
+.emblem-year {
+  font-size: 12px;
+  font-weight: 600;
+  color: #A8A29E;
+}
+
+.award-id-badge {
+  font-size: 15px;
+  font-weight: 700;
+  color: #FF9F1C;
+  border: 1px dashed rgba(255, 159, 28, 0.6);
+  padding: 4px 12px;
+  border-radius: 9999px;
+}
+
+/* Card Body */
+.award-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.award-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: -0.5px;
+  margin: 0;
+}
+
+.award-description {
+  font-size: 15px;
+  line-height: 1.55;
+  color: #A8A29E;
+  margin: 0;
+}
+
+/* Pagination Bar */
+.awards-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.pagination-dot {
+  width: 28px;
+  height: 6px;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.15);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pagination-dot.active {
+  width: 44px;
+  background-color: #FF9F1C;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 1024px) {
+  .awards-header {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .awards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .awards-title {
+    font-size: 40px;
+  }
+}
+
+@media (max-width: 640px) {
+  .awards-grid {
+    grid-template-columns: 1fr;
+  }
+}

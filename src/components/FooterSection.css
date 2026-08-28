@@ -1,0 +1,367 @@
+.footer-container {
+  width: 100%;
+  background-color: #F7F5EE;
+  color: #191412;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.footer-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 80px 24px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* Top Connect CTA Banner */
+.footer-top-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.footer-connect-title {
+  font-size: 52px;
+  font-weight: 800;
+  color: #191412;
+  letter-spacing: -1.5px;
+  margin: 0;
+}
+
+.footer-connect-title .highlight-text {
+  color: #FF9F1C;
+}
+
+/* Contact Button Pill */
+.footer-contact-btn {
+  display: inline-flex;
+  align-items: center;
+  background-color: #FF9F1C;
+  border: 1.5px solid #191412;
+  padding: 4px 4px 4px 24px;
+  border-radius: 9999px;
+  text-decoration: none;
+  color: #191412;
+  font-size: 15px;
+  font-weight: 700;
+  gap: 14px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(255, 159, 28, 0.3);
+}
+
+.footer-contact-btn .btn-arrow-circle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+  color: #191412;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-contact-btn:hover {
+  background-color: #f09210;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 159, 28, 0.45);
+}
+
+/* Divider Line */
+.footer-divider-line {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
+/* Main 4-Column Footer Grid */
+.footer-main-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Brand Column */
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.footer-logo .logo-badge {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: #FF9F1C;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-logo .logo-text {
+  color: #191412;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.footer-logo .logo-dot {
+  color: #FF9F1C;
+}
+
+.footer-bio-text {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #78716C;
+  margin: 0;
+  max-width: 320px;
+}
+
+/* Yellow Social Buttons */
+.footer-social-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-social-row a {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: #FF9F1C;
+  color: #191412;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 10px rgba(255, 159, 28, 0.3);
+}
+
+.footer-social-row a:hover {
+  background-color: #191412;
+  color: #FFFFFF;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Column Titles */
+.footer-col-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #FF9F1C;
+  margin: 0;
+  letter-spacing: -0.4px;
+}
+
+/* Links & Info Lists */
+.footer-links-list,
+.footer-info-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-links-list a {
+  color: #57534E;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.footer-links-list a:hover {
+  color: #FF9F1C;
+  font-weight: 600;
+}
+
+.footer-info-list li {
+  color: #57534E;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* Newsletter Input Form */
+.newsletter-form {
+  width: 100%;
+}
+
+.newsletter-input-wrapper {
+  display: flex;
+  align-items: center;
+  background-color: #FFFFFF;
+  border-radius: 9999px;
+  padding: 4px 4px 4px 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.newsletter-input-wrapper input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  font-size: 14px;
+  color: #191412;
+  font-family: inherit;
+}
+
+.newsletter-input-wrapper input::placeholder {
+  color: #A8A29E;
+}
+
+.newsletter-submit-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #191412;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.newsletter-submit-btn:hover {
+  background-color: #FF9F1C;
+  transform: scale(1.05);
+}
+
+.newsletter-submit-btn:hover svg {
+  fill: #191412;
+  color: #191412;
+}
+
+.newsletter-success {
+  font-size: 13px;
+  color: #16A34A;
+  font-weight: 600;
+
+}
+
+/* Bottom Dark Copyright Bar (#191412) */
+.footer-bottom-bar {
+  background-color: #191412;
+  border-top: 3px solid #FF9F1C;
+  padding: 20px 24px;
+  color: #FFFFFF;
+}
+
+.bottom-bar-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.copyright-text {
+  font-size: 14px;
+  color: #D6D3D1;
+  margin: 0;
+}
+
+.copyright-text .highlight-name {
+  color: #FF9F1C;
+  font-weight: 700;
+}
+
+.bottom-legal-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bottom-legal-links a {
+  color: #D6D3D1;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.bottom-legal-links a:hover {
+  color: #FF9F1C;
+}
+
+.legal-divider {
+  color: #57534E;
+}
+
+/* Dark Mode Overrides */
+.dark-mode .footer-container {
+  background-color: #12100E;
+  color: #FFFFFF;
+}
+
+.dark-mode .footer-connect-title {
+  color: #FFFFFF;
+}
+
+.dark-mode .footer-logo .logo-text {
+  color: #FFFFFF;
+}
+
+.dark-mode .footer-bio-text,
+.dark-mode .footer-links-list a,
+.dark-mode .footer-info-list li {
+  color: #A8A29E;
+}
+
+.dark-mode .newsletter-input-wrapper {
+  background-color: #1E1916;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .newsletter-input-wrapper input {
+  color: #FFFFFF;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 1024px) {
+  .footer-main-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+  }
+
+  .footer-connect-title {
+    font-size: 38px;
+  }
+}
+
+@media (max-width: 640px) {
+  .footer-top-cta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .footer-main-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .bottom-bar-inner {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+  }
+}

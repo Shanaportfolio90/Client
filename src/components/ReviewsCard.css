@@ -1,0 +1,43 @@
+.reviews-card-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.avatar-stack-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.avatar-stack-img {
+  height: 40px;
+  width: auto;
+  border-radius: 9999px;
+  object-fit: contain;
+}
+
+.reviews-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.reviews-score {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+.orange-text {
+  color: #FF9F1C;
+}
+
+.dark-text {
+  color: #1C1917;
+}
+
+.reviews-subtext {
+  font-size: 14px;
+  color: #78716C;
+  font-weight: 500;
+}

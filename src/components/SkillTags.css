@@ -1,0 +1,63 @@
+.skill-tags-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.tags-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tag-pill {
+  padding: 10px 22px;
+  border-radius: 9999px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  transition: all 0.25s ease;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.tag-pill:hover {
+  transform: translateY(-2px) scale(1.03);
+}
+
+.tag-black {
+  background-color: #191412;
+  color: #FFFFFF;
+}
+
+.tag-black:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.tag-orange {
+  background-color: #FF9F1C;
+  color: #191412;
+}
+
+.tag-orange:hover {
+  box-shadow: 0 6px 16px rgba(255, 159, 28, 0.35);
+}
+
+.spark-badge {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: #FF9F1C;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(255, 159, 28, 0.3);
+}
+
+@media (max-width: 768px) {
+  .skill-tags-container {
+    align-items: center;
+  }
+}
