@@ -133,6 +133,7 @@
   flex-direction: column;
   gap: 20px;
   cursor: pointer;
+  text-decoration: none;
 }
 
 /* Thumbnail Wrapper & Overlay Badge */
@@ -167,6 +168,24 @@
   padding: 6px 16px;
   border-radius: 9999px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  z-index: 2;
+}
+
+.play-icon-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #FFFFFF;
+  opacity: 0.85;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.blog-card:hover .play-icon-overlay {
+  color: #FF9F1C;
+  transform: translate(-50%, -50%) scale(1.2);
+  opacity: 1;
 }
 
 /* Card Content & Meta */

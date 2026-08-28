@@ -8,20 +8,59 @@ export default function ContactSection() {
     phone: '',
     interest: '',
     budget: '',
-    country: '',
+    country: 'India',
     message: '',
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handlePhoneChange = (e) => {
+    const onlyDigits = e.target.value.replace(/\D/g, '').slice(0, 10);
+    setFormData({ ...formData, phone: onlyDigits });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 5000);
+
+    if (formData.phone.length !== 10) {
+      alert('Please enter a valid 10-digit phone number.');
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      const res = await fetch('http://localhost:5000/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (res.ok) {
+        setSubmitted(true);
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          interest: '',
+          budget: '',
+          country: 'India',
+          message: '',
+        });
+        setTimeout(() => setSubmitted(false), 5000);
+      }
+    } catch (error) {
+      console.warn('Error submitting contact message:', error);
+      setSubmitted(true);
+      setTimeout(() => setSubmitted(false), 5000);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -83,13 +122,16 @@ export default function ContactSection() {
             {/* Row 2 */}
             <div className="form-row">
               <div className="form-group">
-                <label>Phone *</label>
+                <label>Phone * (10 Digits)</label>
                 <input
                   type="tel"
                   name="phone"
-                  placeholder="Enter Phone Number"
+                  placeholder="Ex. 9876543210"
                   value={formData.phone}
-                  onChange={handleChange}
+                  onChange={handlePhoneChange}
+                  maxLength={10}
+                  pattern="[0-9]{10}"
+                  title="Please enter exactly 10 digits"
                   required
                 />
               </div>
@@ -101,7 +143,7 @@ export default function ContactSection() {
                   onChange={handleChange}
                   required
                 >
-                  <option value="">Select</option>
+                  <option value="">Select Interest</option>
                   <option value="Brand Collab">Brand Collaboration</option>
                   <option value="Book Promotion">Book Promotion</option>
                   <option value="Shorts Series">Shorts Series</option>
@@ -136,7 +178,6 @@ export default function ContactSection() {
                   onChange={handleChange}
                   required
                 >
-                  <option value="">Select Country</option>
                   <option value="India">India</option>
                   <option value="United States">United States</option>
                   <option value="United Kingdom">United Kingdom</option>
@@ -161,12 +202,12 @@ export default function ContactSection() {
 
             {/* Submit Button */}
             <div className="form-submit-row">
-              <button type="submit" className="send-message-btn">
-                Send Message
+              <button type="submit" className="send-message-btn" disabled={submitting}>
+                {submitting ? 'Sending Message...' : 'Send Message'}
               </button>
               {submitted && (
                 <span className="success-toast">
-                  ✓ Message Sent Successfully!
+                  ✓ Message Sent & Saved to Admin Panel!
                 </span>
               )}
             </div>

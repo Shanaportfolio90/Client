@@ -33,8 +33,8 @@ export default function HeroImage() {
               <ArrowRight size={14} />
             </div>
           </a>
-          <a href="#hire" className="capsule-btn white-btn">
-            Hire Me
+          <a href="#contact" className="capsule-btn white-btn">
+            Connect
           </a>
         </div>
       </div>

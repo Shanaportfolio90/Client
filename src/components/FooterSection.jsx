@@ -143,6 +143,8 @@ export default function FooterSection() {
           </p>
 
           <div className="bottom-legal-links">
+            <a href="/admin">Admin Panel Login</a>
+            <span className="legal-divider">|</span>
             <a href="#terms">User Terms & Conditions</a>
             <span className="legal-divider">|</span>
             <a href="#privacy">Privacy Policy</a>

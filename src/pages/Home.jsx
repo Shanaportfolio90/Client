@@ -3,7 +3,6 @@ import Navbar from '../components/Navbar';
 import HeroBadge from '../components/HeroBadge';
 import HeroTitle from '../components/HeroTitle';
 import SocialLinks from '../components/SocialLinks';
-import ReviewsCard from '../components/ReviewsCard';
 import HeroImage from '../components/HeroImage';
 import HireBadge from '../components/HireBadge';
 import QuoteCard from '../components/QuoteCard';
@@ -11,7 +10,6 @@ import SkillTags from '../components/SkillTags';
 import MarqueeSlider from '../components/MarqueeSlider';
 import ServicesSection from '../components/ServicesSection';
 import AboutSection from '../components/AboutSection';
-import ToolsSection from '../components/ToolsSection';
 import PortfolioSection from '../components/PortfolioSection';
 import AwardsSection from '../components/AwardsSection';
 import WorkProcessSection from '../components/WorkProcessSection';
@@ -48,13 +46,10 @@ export default function Home() {
 
         {/* Main 3-Column Hero Section */}
         <div className="hero-content-grid">
-          {/* Left Column: Social Links & Reviews */}
+          {/* Left Column: Social Links */}
           <div className="hero-left-column">
             <div className="left-column-top">
               <SocialLinks />
-            </div>
-            <div className="left-column-bottom">
-              <ReviewsCard />
             </div>
           </div>
 
@@ -86,9 +81,6 @@ export default function Home() {
 
       {/* About Me Section ("Who is Snaha Chakraborty?") */}
       <AboutSection />
-
-      {/* Favorite Tools Section ("Exploring the Tools Behind My Work") */}
-      <ToolsSection />
 
       {/* Portfolio Section ("Let's Have a Look at My Portfolio") */}
       <PortfolioSection />
