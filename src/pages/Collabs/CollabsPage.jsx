@@ -9,6 +9,8 @@ import yamkitchImg from '../../assets/yamkitch-mockup.jpg';
 import lekhokTripuraImg from '../../assets/lekhok-tripura-mockup.jpg';
 import yamkitchLogo from '../../assets/yamkitch-logo.png';
 import genwebOfficialLogo from '../../assets/genweb-official-logo.png';
+import lekhokTripuraLogo from '../../assets/lekhok-tripura-logo.png';
+import lekhokTripuraWebLogo from '../../assets/lekhok-tripura-web-logo.jpeg';
 import p1Img from '../../assets/project-1-mockup.png';
 import p2Img from '../../assets/project-2-mockup.png';
 import b1Img from '../../assets/blog-1.png';
@@ -263,11 +265,16 @@ export default function CollabsPage() {
             {/* Brand Header */}
             <div className="brand-showcase-header">
               <div className="brand-logo-pill publisher-pill">
-                <BookOpen size={20} className="brand-pill-icon" />
+                <img src={lekhokTripuraWebLogo} alt="Lekhok Tripura Logo" className="brand-circle-pill-img" />
                 <span>Lekhok Tripura Publishers</span>
               </div>
-              <h2 className="brand-showcase-title">
-                Lekhok Tripura Publishers <span className="highlight-text">• Published Books & Campaigns</span>
+              <h2 className="brand-showcase-title with-circle-logo">
+                <div className="title-logo-circle">
+                  <img src={lekhokTripuraWebLogo} alt="Lekhok Tripura Logo" className="circle-logo-img" />
+                </div>
+                <span>Lekhok Tripura Publishers</span>
+                <span className="dot-divider">•</span>
+                <span className="highlight-text">Published Books & Campaigns</span>
               </h2>
               <p className="brand-showcase-tagline">
                 Bestseller book launches, author branding, trailer reels, and multi-platform literature promotions.
@@ -278,12 +285,20 @@ export default function CollabsPage() {
             <div className="showcase-project-card layout-reverse">
               <div className="showcase-info-col">
                 <div className="showcase-tags-row">
-                  <span className="tag-pill">Lekhok Tripura</span>
+                  <span className="tag-pill tag-pill-dark-logo">
+                    <img src={lekhokTripuraWebLogo} alt="Lekhok Tripura Logo" className="pill-logo-img" />
+                    <span>Lekhok Tripura</span>
+                  </span>
                   <span className="tag-pill">Book Promotion</span>
                   <span className="tag-pill">Author Branding</span>
                 </div>
 
-                <h3 className="project-headline">Lekhok Tripura - Published Books & Video Marketing</h3>
+                <h3 className="project-headline with-circle-logo">
+                  <div className="title-logo-circle">
+                    <img src={lekhokTripuraWebLogo} alt="Lekhok Tripura Logo" className="circle-logo-img" />
+                  </div>
+                  <span>Lekhok Tripura - Published Books & Video Marketing</span>
+                </h3>
 
                 <p className="project-description">
                   Full-scale book promotion campaign & video marketing for Lekhok Tripura Publishers. Produced bestseller book trailers, author spotlights, and short video reels that expanded novel circulation and reader reach across Tripura & Bengal.
