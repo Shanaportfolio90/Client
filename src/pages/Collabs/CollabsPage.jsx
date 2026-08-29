@@ -8,6 +8,7 @@ import FooterSection from '../../components/FooterSection';
 import yamkitchImg from '../../assets/yamkitch-mockup.jpg';
 import lekhokTripuraImg from '../../assets/lekhok-tripura-mockup.jpg';
 import yamkitchLogo from '../../assets/yamkitch-logo.png';
+import genwebOfficialLogo from '../../assets/genweb-official-logo.png';
 import p1Img from '../../assets/project-1-mockup.png';
 import p2Img from '../../assets/project-2-mockup.png';
 import b1Img from '../../assets/blog-1.png';
@@ -174,11 +175,16 @@ export default function CollabsPage() {
             {/* Brand Header */}
             <div className="brand-showcase-header">
               <div className="brand-logo-pill">
-                <Globe size={20} className="brand-pill-icon" />
+                <img src={genwebOfficialLogo} alt="GenWeb Tech Logo" className="brand-circle-pill-img" />
                 <span>GenWeb Tech</span>
               </div>
-              <h2 className="brand-showcase-title">
-                GenWeb Tech <span className="highlight-text">• Web & Tech Showcase</span>
+              <h2 className="brand-showcase-title with-circle-logo">
+                <div className="title-logo-circle">
+                  <img src={genwebOfficialLogo} alt="GenWeb Tech Logo" className="circle-logo-img" />
+                </div>
+                <span>GenWeb Tech</span>
+                <span className="dot-divider">•</span>
+                <span className="highlight-text">Web & Tech Showcase</span>
               </h2>
               <p className="brand-showcase-tagline">
                 High-performance website architecture, modern UI/UX design systems, and digital platform development.
@@ -205,7 +211,12 @@ export default function CollabsPage() {
                   <span className="tag-pill">Responsive Web</span>
                 </div>
 
-                <h3 className="project-headline">YamKitch - Food Tech & Digital Web Solution</h3>
+                <h3 className="project-headline with-circle-logo">
+                  <div className="title-logo-circle">
+                    <img src={yamkitchLogo} alt="YamKitch Logo" className="circle-logo-img" />
+                  </div>
+                  <span>YamKitch - Food Tech & Digital Web Solution</span>
+                </h3>
 
                 <p className="project-description">
                   Designed and built a modern, responsive web application interface for YamKitch. Engineered for optimal performance, smooth user flow, and clean visual branding.
