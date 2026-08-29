@@ -158,14 +158,13 @@ export default function PricingSection() {
                   </div>
 
                   <div className="modal-form-group">
-                    <label>Brand Website *</label>
+                    <label>Brand Website (Optional)</label>
                     <input
                       type="url"
                       name="brandWebsite"
                       placeholder="https://www.example.com"
                       value={formState.brandWebsite}
                       onChange={handleInputChange}
-                      required
                     />
                   </div>
                 </div>
