@@ -7,6 +7,7 @@ import PricingSection from '../../components/PricingSection';
 import FooterSection from '../../components/FooterSection';
 import yamkitchImg from '../../assets/yamkitch-mockup.jpg';
 import lekhokTripuraImg from '../../assets/lekhok-tripura-mockup.jpg';
+import yamkitchLogo from '../../assets/yamkitch-logo.png';
 import p1Img from '../../assets/project-1-mockup.png';
 import p2Img from '../../assets/project-2-mockup.png';
 import b1Img from '../../assets/blog-1.png';
@@ -196,6 +197,10 @@ export default function CollabsPage() {
               <div className="showcase-info-col">
                 <div className="showcase-tags-row">
                   <span className="tag-pill">GenWeb Tech</span>
+                  <span className="tag-pill tag-pill-dark-logo">
+                    <img src={yamkitchLogo} alt="YamKitch Logo" className="pill-logo-img" />
+                    <span>YamKitch</span>
+                  </span>
                   <span className="tag-pill">UI/UX Design</span>
                   <span className="tag-pill">Responsive Web</span>
                 </div>
@@ -224,7 +229,12 @@ export default function CollabsPage() {
                     <strong>Need a website like YamKitch?</strong>
                     <span>Get a custom, high-converting website built for your business.</span>
                   </div>
-                  <a href="#pricing" className="brand-action-btn">
+                  <a
+                    href="https://wa.me/918258892262?text=Hi%20Snaha%20%26%20GenWeb%20Tech%20team!%20I%20came%20across%20your%20portfolio%20website%20and%20I%20am%20interested%20in%20getting%20a%20professional%20website%20built.%20Please%20share%20details!"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="brand-action-btn"
+                  >
                     <span>Get a Professional Website</span>
                     <ArrowUpRight size={18} />
                   </a>
@@ -286,8 +296,13 @@ export default function CollabsPage() {
                     <strong>Are you an author or publisher?</strong>
                     <span>Promote & launch your book into a bestseller campaign.</span>
                   </div>
-                  <a href="#pricing" className="brand-action-btn publisher-action-btn">
-                    <span>Publish Your Book Now</span>
+                  <a
+                    href="https://wa.me/918258892262?text=Hi%20Snaha%20%26%20Lekhok%20Tripura%20team!%20I%20am%20an%20author/publisher%20interested%20in%20book%20promotions.%20Please%20share%20details!"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="brand-action-btn publisher-action-btn"
+                  >
+                    <span>Promote Your Book Now</span>
                     <ArrowUpRight size={18} />
                   </a>
                 </div>

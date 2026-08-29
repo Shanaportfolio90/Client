@@ -235,13 +235,21 @@
 .brand-logo-pill {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background-color: rgba(255, 159, 28, 0.15);
+  gap: 10px;
+  background-color: #191412;
   color: #FF9F1C;
-  padding: 6px 16px;
+  padding: 8px 20px 8px 14px;
   border-radius: 9999px;
   font-size: 14px;
   font-weight: 800;
+  border: 1.5px solid rgba(255, 159, 28, 0.4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.brand-logo-img {
+  height: 24px;
+  width: auto;
+  object-fit: contain;
 }
 
 .publisher-pill {
@@ -346,6 +354,23 @@
   font-weight: 600;
   padding: 4px 12px;
   border-radius: 9999px;
+}
+
+.tag-pill-dark-logo {
+  background-color: #191412 !important;
+  color: #FF9F1C !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px 5px 10px !important;
+  border: 1px solid rgba(255, 159, 28, 0.4);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.pill-logo-img {
+  height: 20px;
+  width: auto;
+  object-fit: contain;
 }
 
 .project-headline {
