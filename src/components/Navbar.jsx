@@ -8,7 +8,6 @@ export default function Navbar({ isDarkMode, toggleDarkMode }) {
 
   const navItems = [
     { name: 'Home', href: '#home' },
-    { name: 'Services', href: '#services' },
     { name: 'Collabs', href: '#collabs' },
     { name: 'Shorts Series', href: '#series' },
     { name: 'Book Promo', href: '#book-promo' },
