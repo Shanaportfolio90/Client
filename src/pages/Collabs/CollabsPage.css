@@ -1,0 +1,706 @@
+/* ==========================================================================
+   COLLABS PAGE STYLES (SNAHA PORTFOLIO THEME)
+   ========================================================================== */
+
+.collabs-page-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  overflow-x: clip;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+.collabs-page-wrapper.light-mode {
+  background-color: #F7F5EE;
+  color: #1C1917;
+}
+
+.collabs-page-wrapper.dark-mode {
+  background-color: #12100E;
+  color: #F5F5F4;
+}
+
+/* ==========================================================================
+   1. HERO HEADER & BREADCRUMBS
+   ========================================================================== */
+
+.collabs-hero-header {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 130px 24px 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.collabs-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  max-width: 800px;
+}
+
+.collabs-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(255, 159, 28, 0.12);
+  border: 1px solid rgba(255, 159, 28, 0.3);
+  padding: 8px 18px;
+  border-radius: 9999px;
+}
+
+.badge-circles {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.circle-black {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #191412;
+}
+
+.dark-mode .circle-black {
+  background-color: #FFFFFF;
+}
+
+.circle-orange {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #FF9F1C;
+}
+
+.badge-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #191412;
+}
+
+.dark-mode .badge-label {
+  color: #FFFFFF;
+}
+
+.collabs-main-title {
+  font-size: 50px;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  margin: 0;
+  color: #191412;
+  line-height: 1.15;
+}
+
+.dark-mode .collabs-main-title {
+  color: #FFFFFF;
+}
+
+.collabs-subtitle {
+  font-size: 17px;
+  line-height: 1.6;
+  color: #57534E;
+  margin: 0;
+}
+
+.dark-mode .collabs-subtitle {
+  color: #A8A29E;
+}
+
+.collabs-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.breadcrumb-link {
+  color: #78716C;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.breadcrumb-link:hover {
+  color: #FF9F1C;
+}
+
+.breadcrumb-separator {
+  color: #A8A29E;
+}
+
+.breadcrumb-current {
+  color: #FF9F1C;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   2. MARQUEE BANNER
+   ========================================================================== */
+
+.collabs-marquee-banner {
+  width: 100%;
+  background-color: #191412;
+  border-top: 3px solid #FF9F1C;
+  border-bottom: 3px solid #FF9F1C;
+  overflow: hidden;
+  padding: 16px 0;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.marquee-track {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  width: max-content;
+  animation: scrollMarquee 25s linear infinite;
+}
+
+@keyframes scrollMarquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.333%);
+  }
+}
+
+.marquee-item {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  white-space: nowrap;
+}
+
+.marquee-text {
+  font-size: 24px;
+  font-weight: 800;
+  color: #FFFFFF;
+}
+
+.marquee-star {
+  color: #FF9F1C;
+  fill: #FF9F1C;
+}
+
+/* ==========================================================================
+   3. FEATURED SHOWCASE SECTIONS (GENWEB TECH & LEKHOK TRIPURA)
+   ========================================================================== */
+
+.collabs-main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+  padding: 80px 0;
+}
+
+.featured-brand-showcase {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 24px;
+  width: 100%;
+}
+
+.showcase-inner {
+  background-color: #FFFFFF;
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  border-radius: 32px;
+  padding: 48px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  transition: all 0.3s ease;
+}
+
+.dark-mode .showcase-inner {
+  background-color: #191412;
+  border-color: rgba(255, 159, 28, 0.3);
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.3);
+}
+
+.brand-showcase-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.brand-logo-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(255, 159, 28, 0.15);
+  color: #FF9F1C;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.publisher-pill {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: #60A5FA;
+}
+
+.brand-showcase-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #191412;
+  margin: 0;
+  letter-spacing: -0.8px;
+}
+
+.dark-mode .brand-showcase-title {
+  color: #FFFFFF;
+}
+
+.brand-showcase-tagline {
+  font-size: 16px;
+  color: #78716C;
+  margin: 0;
+}
+
+.dark-mode .brand-showcase-tagline {
+  color: #A8A29E;
+}
+
+/* Showcase Card Grid */
+
+.showcase-project-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  background-color: #F7F5EE;
+  border-radius: 24px;
+  padding: 32px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.dark-mode .showcase-project-card {
+  background-color: #12100E;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.layout-reverse {
+  grid-template-columns: 1fr 1fr;
+}
+
+.showcase-img-wrap {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.showcase-mockup-img {
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.showcase-img-wrap:hover .showcase-mockup-img {
+  transform: scale(1.04);
+}
+
+.showcase-badge-pill {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background-color: rgba(25, 20, 18, 0.85);
+  backdrop-filter: blur(8px);
+  color: #FF9F1C;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 159, 28, 0.3);
+}
+
+.showcase-info-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.showcase-tags-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tag-pill {
+  background-color: rgba(255, 159, 28, 0.12);
+  color: #FF9F1C;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 9999px;
+}
+
+.project-headline {
+  font-size: 24px;
+  font-weight: 800;
+  color: #191412;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.dark-mode .project-headline {
+  color: #FFFFFF;
+}
+
+.project-description {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #57534E;
+  margin: 0;
+}
+
+.dark-mode .project-description {
+  color: #D6D3D1;
+}
+
+/* Visit Live Website Link Button */
+
+.visit-live-site-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #191412;
+  color: #FFFFFF;
+  padding: 12px 20px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  width: fit-content;
+  transition: all 0.25s ease;
+  border: 1px solid rgba(255, 159, 28, 0.3);
+}
+
+.visit-live-site-btn:hover {
+  background-color: #FF9F1C;
+  color: #191412;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 159, 28, 0.4);
+}
+
+/* Brand Action CTA Box (Bottom of Showcase) */
+
+.brand-action-cta-box {
+  background-color: rgba(255, 159, 28, 0.1);
+  border: 1.5px solid rgba(255, 159, 28, 0.4);
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.cta-box-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cta-box-text strong {
+  font-size: 15px;
+  color: #191412;
+}
+
+.dark-mode .cta-box-text strong {
+  color: #FFFFFF;
+}
+
+.cta-box-text span {
+  font-size: 13px;
+  color: #78716C;
+}
+
+.dark-mode .cta-box-text span {
+  color: #A8A29E;
+}
+
+.brand-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #FF9F1C;
+  color: #191412;
+  padding: 12px 24px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 15px rgba(255, 159, 28, 0.35);
+}
+
+.brand-action-btn:hover {
+  background-color: #FFFFFF;
+  color: #191412;
+  transform: scale(1.04);
+  box-shadow: 0 6px 22px rgba(255, 255, 255, 0.4);
+}
+
+.publisher-action-btn {
+  background-color: #FF9F1C;
+}
+
+/* ==========================================================================
+   4. ALL BRAND PORTFOLIO GRID & FILTERS
+   ========================================================================== */
+
+.all-collabs-portfolio-section {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 24px;
+  width: 100%;
+}
+
+.portfolio-section-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.section-title-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+}
+
+.portfolio-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(255, 159, 28, 0.15);
+  color: #FF9F1C;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 9999px;
+}
+
+.section-heading {
+  font-size: 36px;
+  font-weight: 800;
+  color: #191412;
+  margin: 0;
+  letter-spacing: -0.8px;
+}
+
+.dark-mode .section-heading {
+  color: #FFFFFF;
+}
+
+.filter-tabs-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filter-pill-btn {
+  background-color: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #57534E;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 22px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.dark-mode .filter-pill-btn {
+  background-color: #191412;
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #A8A29E;
+}
+
+.filter-pill-btn:hover,
+.filter-pill-btn.active {
+  background-color: #FF9F1C;
+  border-color: #FF9F1C;
+  color: #191412;
+  font-weight: 800;
+  box-shadow: 0 4px 15px rgba(255, 159, 28, 0.35);
+}
+
+.brand-projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+.brand-card {
+  background-color: #FFFFFF;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.dark-mode .brand-card {
+  background-color: #191412;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.brand-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+}
+
+.card-media-wrap {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+}
+
+.card-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.brand-card:hover .card-thumb-img {
+  transform: scale(1.06);
+}
+
+.card-brand-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background-color: rgba(25, 20, 18, 0.85);
+  backdrop-filter: blur(8px);
+  color: #FF9F1C;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 9999px;
+}
+
+.card-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-grow: 1;
+}
+
+.card-tags-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.card-tag-pill {
+  font-size: 11px;
+  font-weight: 600;
+  background-color: rgba(255, 159, 28, 0.12);
+  color: #FF9F1C;
+  padding: 3px 8px;
+  border-radius: 9999px;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #191412;
+  margin: 0;
+  line-height: 1.35;
+}
+
+.dark-mode .card-title {
+  color: #FFFFFF;
+}
+
+.card-desc {
+  font-size: 14px;
+  color: #78716C;
+  margin: 0;
+  line-height: 1.5;
+  flex-grow: 1;
+}
+
+.dark-mode .card-desc {
+  color: #A8A29E;
+}
+
+.card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #FF9F1C;
+  text-decoration: none;
+  margin-top: 6px;
+}
+
+.card-link:hover {
+  text-decoration: underline;
+}
+
+/* Responsive Media Queries */
+
+@media (max-width: 1024px) {
+  .showcase-project-card {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .collabs-main-title {
+    font-size: 36px;
+  }
+
+  .showcase-inner {
+    padding: 24px;
+  }
+
+  .brand-showcase-title {
+    font-size: 24px;
+  }
+
+  .brand-action-cta-box {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .brand-action-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .brand-projects-grid {
+    grid-template-columns: 1fr;
+  }
+}
