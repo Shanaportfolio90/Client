@@ -3,12 +3,17 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 24px 24px 10px;
-  position: relative;
-  z-index: 100;
+  padding: 16px 24px 10px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  pointer-events: none;
 }
 
 .navbar-pill {
+  pointer-events: auto;
   background-color: #191412;
   border-radius: 9999px;
   padding: 10px 20px 10px 24px;
@@ -17,7 +22,7 @@
   justify-content: space-between;
   width: 100%;
   max-width: 1240px;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
   transition: all 0.3s ease;
 }
 
@@ -157,6 +162,7 @@
 
 /* Mobile Dropdown Drawer */
 .mobile-dropdown-menu {
+  pointer-events: auto;
   width: 100%;
   max-width: 1240px;
   margin-top: 10px;
