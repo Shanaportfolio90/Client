@@ -10,7 +10,6 @@ import lekhokTripuraImg from '../../assets/lekhok-tripura-mockup.jpg';
 import yamkitchLogo from '../../assets/yamkitch-logo.png';
 import genwebOfficialLogo from '../../assets/genweb-official-logo.png';
 import lekhokTripuraLogo from '../../assets/lekhok-tripura-logo.png';
-import lekhokTripuraWebLogo from '../../assets/lekhok-tripura-web-logo.jpeg';
 import p1Img from '../../assets/project-1-mockup.png';
 import p2Img from '../../assets/project-2-mockup.png';
 import b1Img from '../../assets/blog-1.png';
@@ -265,12 +264,12 @@ export default function CollabsPage() {
             {/* Brand Header */}
             <div className="brand-showcase-header">
               <div className="brand-logo-pill publisher-pill">
-                <img src={lekhokTripuraWebLogo} alt="Lekhok Tripura Logo" className="brand-circle-pill-img" />
+                <img src={lekhokTripuraLogo} alt="Lekhok Tripura Logo" className="brand-circle-pill-img" />
                 <span>Lekhok Tripura Publishers</span>
               </div>
               <h2 className="brand-showcase-title with-circle-logo">
                 <div className="title-logo-circle">
-                  <img src={lekhokTripuraWebLogo} alt="Lekhok Tripura Logo" className="circle-logo-img" />
+                  <img src={lekhokTripuraLogo} alt="Lekhok Tripura Logo" className="circle-logo-img" />
                 </div>
                 <span>Lekhok Tripura Publishers</span>
                 <span className="dot-divider">•</span>
@@ -286,7 +285,7 @@ export default function CollabsPage() {
               <div className="showcase-info-col">
                 <div className="showcase-tags-row">
                   <span className="tag-pill tag-pill-dark-logo">
-                    <img src={lekhokTripuraWebLogo} alt="Lekhok Tripura Logo" className="pill-logo-img" />
+                    <img src={lekhokTripuraLogo} alt="Lekhok Tripura Logo" className="pill-logo-img" />
                     <span>Lekhok Tripura</span>
                   </span>
                   <span className="tag-pill">Book Promotion</span>
@@ -295,7 +294,7 @@ export default function CollabsPage() {
 
                 <h3 className="project-headline with-circle-logo">
                   <div className="title-logo-circle">
-                    <img src={lekhokTripuraWebLogo} alt="Lekhok Tripura Logo" className="circle-logo-img" />
+                    <img src={lekhokTripuraLogo} alt="Lekhok Tripura Logo" className="circle-logo-img" />
                   </div>
                   <span>Lekhok Tripura - Published Books & Video Marketing</span>
                 </h3>
