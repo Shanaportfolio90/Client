@@ -26,9 +26,7 @@ export default function Navbar({ isDarkMode, toggleDarkMode }) {
         {/* Brand Logo */}
         <a href="#home" className="navbar-logo" onClick={() => handleNavClick('Home')}>
           <div className="logo-badge">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
-              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="#191412" stroke="#191412" strokeWidth="1" />
-            </svg>
+            <span className="logo-letter-s">S</span>
           </div>
           <span className="logo-text">
             Snaha<span className="logo-dot">.</span>

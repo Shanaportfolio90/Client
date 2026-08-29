@@ -37,11 +37,72 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #FF9F1C;
+  background: linear-gradient(135deg, #FFB703 0%, #FF9F1C 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(255, 159, 28, 0.4);
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+.logo-badge::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 100%
+  );
+  transform: rotate(45deg) translateY(-100%);
+  animation: shineShimmer 3.5s infinite ease-in-out;
+}
+
+@keyframes shineShimmer {
+  0%, 75% {
+    transform: rotate(45deg) translateY(-100%);
+  }
+  100% {
+    transform: rotate(45deg) translateY(100%);
+  }
+}
+
+.logo-letter-s {
+  color: #191412;
+  font-size: 22px;
+  font-weight: 900;
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  line-height: 1;
+  letter-spacing: -0.5px;
+  user-select: none;
+  display: inline-block;
+  transition: transform 0.4s ease;
+  animation: pulseLetter 3s infinite ease-in-out;
+}
+
+@keyframes pulseLetter {
+  0%, 100% {
+    transform: scale(1) translateY(0);
+  }
+  50% {
+    transform: scale(1.1) translateY(-1px);
+  }
+}
+
+.navbar-logo:hover .logo-badge {
+  transform: scale(1.12) rotate(360deg);
+  box-shadow: 0 0 22px rgba(255, 159, 28, 0.85);
+}
+
+.navbar-logo:hover .logo-letter-s {
+  transform: scale(1.15);
 }
 
 .logo-text {
