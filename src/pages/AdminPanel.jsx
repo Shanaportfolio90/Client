@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import {
   Lock,
   Mail,
+  Eye,
+  EyeOff,
   LogOut,
   RefreshCw,
   Trash2,
@@ -37,6 +39,7 @@ export default function AdminPanel() {
   const [token, setToken] = useState(localStorage.getItem('snaha_admin_token') || '');
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
 
@@ -405,12 +408,21 @@ export default function AdminPanel() {
               <div className="input-with-icon">
                 <Lock size={18} className="input-icon" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
                   required
                 />
+                <button
+                  type="button"
+                  className="toggle-password-btn"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  tabIndex={-1}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
             </div>
 
