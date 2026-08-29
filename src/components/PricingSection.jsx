@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, X } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 import './PricingSection.css';
 
 export default function PricingSection() {
@@ -62,7 +63,7 @@ export default function PricingSection() {
 
     try {
       // API call to backend Express server / MongoDB
-      const res = await fetch('http://localhost:5000/api/inquiries', {
+      const res = await fetch(`${API_BASE_URL}/api/inquiries`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formState),

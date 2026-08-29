@@ -30,6 +30,8 @@ import {
   XCircle
 } from 'lucide-react';
 import './AdminPanel.css';
+import { API_BASE_URL } from '../config';
+
 
 export default function AdminPanel() {
   const [token, setToken] = useState(localStorage.getItem('snaha_admin_token') || '');
@@ -69,17 +71,17 @@ export default function AdminPanel() {
 
     try {
       // Fetch Brand Proposals
-      const reqInquiries = fetch('http://localhost:5000/api/admin/inquiries', {
+      const reqInquiries = fetch(`${API_BASE_URL}/api/admin/inquiries`, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
 
       // Fetch Contact Messages
-      const reqContacts = fetch('http://localhost:5000/api/admin/contacts', {
+      const reqContacts = fetch(`${API_BASE_URL}/api/admin/contacts`, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
 
       // Fetch Media List
-      const reqMedia = fetch('http://localhost:5000/api/media');
+      const reqMedia = fetch(`${API_BASE_URL}/api/media`);
 
       const [resInquiries, resContacts, resMedia] = await Promise.all([
         reqInquiries,
@@ -115,7 +117,7 @@ export default function AdminPanel() {
     setLoginLoading(true);
 
     try {
-      const res = await fetch('http://localhost:5000/api/admin/login', {
+      const res = await fetch(`${API_BASE_URL}/api/admin/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: loginEmail, password: loginPassword }),
@@ -165,7 +167,7 @@ export default function AdminPanel() {
     reader.onloadend = async () => {
       const base64Image = reader.result;
       try {
-        const res = await fetch('http://localhost:5000/api/admin/upload', {
+        const res = await fetch(`${API_BASE_URL}/api/admin/upload`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -232,8 +234,8 @@ export default function AdminPanel() {
 
     const isEdit = Boolean(editingId);
     const endpoint = isEdit
-      ? `http://localhost:5000/api/admin/media/${editingId}`
-      : 'http://localhost:5000/api/admin/media';
+      ? `${API_BASE_URL}/api/admin/media/${editingId}`
+      : `${API_BASE_URL}/api/admin/media`;
     const method = isEdit ? 'PUT' : 'POST';
 
     try {
@@ -281,7 +283,7 @@ export default function AdminPanel() {
     if (!window.confirm('Delete this video/media card?')) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/media/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/admin/media/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -298,7 +300,7 @@ export default function AdminPanel() {
   // Status & Delete Handlers for Proposals & Contacts
   const handleStatusUpdate = async (id, newStatus) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/inquiries/${id}/status`, {
+      const res = await fetch(`${API_BASE_URL}/api/admin/inquiries/${id}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -320,7 +322,7 @@ export default function AdminPanel() {
   const handleDeleteInquiry = async (id) => {
     if (!window.confirm('Delete this proposal response?')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/inquiries/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/admin/inquiries/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -333,7 +335,7 @@ export default function AdminPanel() {
   const handleDeleteContact = async (id) => {
     if (!window.confirm('Delete this contact message?')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/contacts/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/admin/contacts/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });

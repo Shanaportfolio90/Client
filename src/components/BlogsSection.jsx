@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, PlayCircle } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 import b1Img from '../assets/blog-1.png';
 import b2Img from '../assets/blog-2.png';
 import b3Img from '../assets/blog-3.png';
@@ -40,7 +41,7 @@ export default function BlogsSection() {
   ];
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/media')
+    fetch(`${API_BASE_URL}/api/media`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
