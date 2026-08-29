@@ -1,29 +1,31 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
 import { Moon, Sun, Menu, X } from 'lucide-react';
 import './Navbar.css';
 
-export default function Navbar({ isDarkMode, toggleDarkMode, activePage }) {
-  const location = useLocation();
+export default function Navbar({ isDarkMode, toggleDarkMode }) {
+  const [activeTab, setActiveTab] = useState('Home');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { name: 'Home', path: '/' },
-    { name: 'Services', path: '/services' },
-    { name: 'Collabs', path: '/#collabs' },
-    { name: 'Shorts Series', path: '/#series' },
-    { name: 'Book Promo', path: '/#book-promo' },
-    { name: 'About Me', path: '/#about' },
-    { name: 'Testimonials', path: '/#testimonials' },
+    { name: 'Home', href: '#home' },
+    { name: 'Services', href: '#services' },
+    { name: 'Collabs', href: '#collabs' },
+    { name: 'Shorts Series', href: '#series' },
+    { name: 'Book Promo', href: '#book-promo' },
+    { name: 'About Me', href: '#about' },
+    { name: 'Testimonials', href: '#testimonials' },
   ];
 
-  const currentTab = activePage || (location.pathname === '/services' ? 'Services' : 'Home');
+  const handleNavClick = (itemName) => {
+    setActiveTab(itemName);
+    setIsMobileMenuOpen(false);
+  };
 
   return (
     <header className="navbar-container">
       <nav className="navbar-pill">
         {/* Brand Logo */}
-        <Link to="/" className="navbar-logo" onClick={() => setIsMobileMenuOpen(false)}>
+        <a href="#home" className="navbar-logo" onClick={() => handleNavClick('Home')}>
           <div className="logo-badge">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
               <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="#191412" stroke="#191412" strokeWidth="1" />
@@ -32,19 +34,24 @@ export default function Navbar({ isDarkMode, toggleDarkMode, activePage }) {
           <span className="logo-text">
             Snaha<span className="logo-dot">.</span>
           </span>
-        </Link>
+        </a>
 
         {/* Desktop Navigation Links */}
         <ul className="nav-links desktop-links">
           {navItems.map((item) => (
             <li key={item.name}>
-              <Link
-                to={item.path}
-                className={`nav-link ${currentTab === item.name ? 'active' : ''}`}
-                onClick={() => setIsMobileMenuOpen(false)}
+              <a
+                href={item.href}
+                className={`nav-link ${activeTab === item.name ? 'active' : ''}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavClick(item.name);
+                  const el = document.querySelector(item.href);
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
               >
                 {item.name}
-              </Link>
+              </a>
             </li>
           ))}
         </ul>
@@ -84,13 +91,17 @@ export default function Navbar({ isDarkMode, toggleDarkMode, activePage }) {
           <ul className="mobile-nav-list">
             {navItems.map((item) => (
               <li key={item.name}>
-                <Link
-                  to={item.path}
-                  className={`mobile-nav-link ${currentTab === item.name ? 'active' : ''}`}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                <a
+                  href={item.href}
+                  className={`mobile-nav-link ${activeTab === item.name ? 'active' : ''}`}
+                  onClick={() => {
+                    handleNavClick(item.name);
+                    const el = document.querySelector(item.href);
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
                 >
                   {item.name}
-                </Link>
+                </a>
               </li>
             ))}
           </ul>
