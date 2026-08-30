@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import './AdminPanel.css';
 import { API_BASE_URL } from '../config';
+import AdminCollabsManager from '../components/AdminCollabsManager';
 
 
 export default function AdminPanel() {
@@ -46,9 +47,10 @@ export default function AdminPanel() {
   const [inquiries, setInquiries] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [mediaList, setMediaList] = useState([]);
+  const [collabsList, setCollabsList] = useState([]);
   const [loadingData, setLoadingData] = useState(false);
 
-  const [activeTab, setActiveTab] = useState('media'); // 'media' | 'proposals' | 'contacts'
+  const [activeTab, setActiveTab] = useState('media'); // 'media' | 'collabs' | 'proposals' | 'contacts'
   const [statusFilter, setStatusFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -63,8 +65,24 @@ export default function AdminPanel() {
     date: new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }),
   });
 
+  // Collabs Form & Edit State
+  const [collabEditingId, setCollabEditingId] = useState(null);
+  const [collabForm, setCollabForm] = useState({
+    brandName: '',
+    category: 'Tech & Web',
+    customCategory: '',
+    title: '',
+    description: '',
+    websiteUrl: '',
+    displayUrl: '',
+    imageUrl: '',
+    tags: '',
+  });
+
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingCollabImage, setUploadingCollabImage] = useState(false);
   const [publishingMedia, setPublishingMedia] = useState(false);
+  const [publishingCollab, setPublishingCollab] = useState(false);
   const [statusState, setStatusState] = useState({ message: '', type: 'info' }); // type: 'info' | 'success' | 'error' | 'edit'
 
   // Fetch Admin Data
@@ -86,10 +104,14 @@ export default function AdminPanel() {
       // Fetch Media List
       const reqMedia = fetch(`${API_BASE_URL}/api/media`);
 
-      const [resInquiries, resContacts, resMedia] = await Promise.all([
+      // Fetch Collabs List
+      const reqCollabs = fetch(`${API_BASE_URL}/api/collabs`);
+
+      const [resInquiries, resContacts, resMedia, resCollabs] = await Promise.all([
         reqInquiries,
         reqContacts,
         reqMedia,
+        reqCollabs,
       ]);
 
       if (resInquiries.status === 401 || resContacts.status === 401) {
@@ -100,6 +122,7 @@ export default function AdminPanel() {
       if (resInquiries.ok) setInquiries(await resInquiries.json());
       if (resContacts.ok) setContacts(await resContacts.json());
       if (resMedia.ok) setMediaList(await resMedia.json());
+      if (resCollabs.ok) setCollabsList(await resCollabs.json());
     } catch (err) {
       console.error('Failed to fetch admin data:', err);
     } finally {
@@ -299,6 +322,8 @@ export default function AdminPanel() {
       console.error('Error deleting media:', err);
     }
   };
+
+
 
   // Status & Delete Handlers for Proposals & Contacts
   const handleStatusUpdate = async (id, newStatus) => {
@@ -546,6 +571,15 @@ export default function AdminPanel() {
               >
                 <Film size={18} />
                 <span>Videos & Media Manager ({totalMedia})</span>
+              </button>
+
+              <button
+                type="button"
+                className={`tab-btn ${activeTab === 'collabs' ? 'active' : ''}`}
+                onClick={() => setActiveTab('collabs')}
+              >
+                <Sparkles size={18} />
+                <span>Collabs Manager ({collabsList.length})</span>
               </button>
 
               <button
@@ -853,6 +887,15 @@ export default function AdminPanel() {
                 )}
               </div>
             </div>
+          )}
+
+          {/* TAB 2: COLLABS & BRAND CARDS MANAGER */}
+          {activeTab === 'collabs' && (
+            <AdminCollabsManager
+              token={token}
+              collabsList={collabsList}
+              setCollabsList={setCollabsList}
+            />
           )}
 
           {/* TAB 2: BRAND PROPOSALS */}

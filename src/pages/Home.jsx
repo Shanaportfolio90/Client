@@ -19,6 +19,7 @@ import BlogsSection from '../components/BlogsSection';
 import ContactSection from '../components/ContactSection';
 import FaqSection from '../components/FaqSection';
 import FooterSection from '../components/FooterSection';
+import ScrollReveal from '../components/ScrollReveal';
 import './Home.css';
 
 export default function Home() {
@@ -77,37 +78,59 @@ export default function Home() {
       <MarqueeSlider />
 
       {/* Services Section ("How I Bring Ideas to Life") */}
-      <ServicesSection />
+      <ScrollReveal variant="fade-up">
+        <ServicesSection />
+      </ScrollReveal>
 
       {/* About Me Section ("Who is Snaha Chakraborty?") */}
-      <AboutSection />
+      <ScrollReveal variant="fade-up">
+        <AboutSection />
+      </ScrollReveal>
 
       {/* Portfolio Section ("Let's Have a Look at My Portfolio") */}
-      <PortfolioSection />
+      <ScrollReveal variant="fade-up">
+        <PortfolioSection />
+      </ScrollReveal>
 
       {/* Achievement Awards Section ("My Award-Winning Design Journey") */}
-      <AwardsSection />
+      <ScrollReveal variant="fade-up">
+        <AwardsSection />
+      </ScrollReveal>
 
       {/* Work Process Section ("The Way I Create Impactful Campaigns") */}
-      <WorkProcessSection />
+      <ScrollReveal variant="fade-up">
+        <WorkProcessSection />
+      </ScrollReveal>
 
       {/* Pricing Table Section ("My Pricing Model") */}
-      <PricingSection />
+      <ScrollReveal variant="fade-up">
+        <PricingSection />
+      </ScrollReveal>
 
       {/* Testimonials Section ("What Clients Say About My Work") */}
-      <TestimonialsSection />
+      <ScrollReveal variant="fade-up">
+        <TestimonialsSection />
+      </ScrollReveal>
 
       {/* Latest Blogs Section ("Insights from My Blogs") */}
-      <BlogsSection />
+      <ScrollReveal variant="fade-up">
+        <BlogsSection />
+      </ScrollReveal>
 
       {/* Contact Me Section ("Let's Talk for Your Next Projects") */}
-      <ContactSection />
+      <ScrollReveal variant="fade-up">
+        <ContactSection />
+      </ScrollReveal>
 
       {/* FAQs Section ("Question? Look here.") */}
-      <FaqSection />
+      <ScrollReveal variant="fade-up">
+        <FaqSection />
+      </ScrollReveal>
 
       {/* Footer Section */}
-      <FooterSection />
+      <ScrollReveal variant="fade-up">
+        <FooterSection />
+      </ScrollReveal>
     </div>
   );
 }

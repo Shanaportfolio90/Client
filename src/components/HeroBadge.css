@@ -1,29 +1,373 @@
+/* ========================================
+   HERO BADGE
+======================================== */
+
 .hero-badge {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 6px 18px 6px 8px;
-  background-color: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 9999px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-  backdrop-filter: blur(8px);
+
+  padding: 7px 20px 7px 8px;
+
+  position: relative;
+  overflow: hidden;
+
+  background:
+    rgba(255, 255, 255, 0.78);
+
+  border:
+    1px solid
+    rgba(0, 0, 0, 0.08);
+
+  border-radius: 999px;
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  box-shadow:
+    0 5px 18px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+
   margin-bottom: 20px;
+
+  cursor: default;
+
+  animation:
+    badgeEntrance 0.7s
+    cubic-bezier(0.16, 1, 0.3, 1)
+    forwards,
+    badgeFloat 4s
+    ease-in-out
+    1s
+    infinite;
+
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
 }
 
+
+/* ========================================
+   ENTRANCE
+======================================== */
+
+@keyframes badgeEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(-18px) scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+/* Gentle Floating */
+
+@keyframes badgeFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+
+/* ========================================
+   HOVER
+======================================== */
+
+.hero-badge:hover {
+  transform: translateY(-4px) scale(1.02);
+
+  border-color:
+    rgba(255, 159, 28, 0.3);
+
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.09),
+    0 0 20px rgba(255, 159, 28, 0.1);
+}
+
+
+/* ========================================
+   BACKGROUND GLOW
+======================================== */
+
+.badge-glow {
+  position: absolute;
+
+  width: 100px;
+  height: 100px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255, 159, 28, 0.12),
+      transparent 70%
+    );
+
+  left: -30px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  pointer-events: none;
+
+  animation:
+    glowMove 5s ease-in-out infinite;
+}
+
+
+@keyframes glowMove {
+  0%,
+  100% {
+    transform:
+      translate(-10px, -50%);
+  }
+
+  50% {
+    transform:
+      translate(20px, -50%);
+  }
+}
+
+
+/* ========================================
+   ICON WRAPPER
+======================================== */
+
 .badge-icon-wrapper {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
+
   border-radius: 50%;
-  background-color: #191412;
+
+  background:
+    linear-gradient(
+      145deg,
+      #191412,
+      #2b2421
+    );
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  position: relative;
+
+  flex-shrink: 0;
+
+  z-index: 2;
+
+  box-shadow:
+    0 3px 10px
+    rgba(0, 0, 0, 0.2);
+
+  animation:
+    iconPulse 3s
+    ease-in-out
+    infinite;
 }
+
+
+@keyframes iconPulse {
+  0%,
+  100% {
+    box-shadow:
+      0 3px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  50% {
+    box-shadow:
+      0 4px 16px rgba(255, 159, 28, 0.35);
+  }
+}
+
+
+/* ========================================
+   ICON ROTATING RING
+======================================== */
+
+.icon-ring {
+  position: absolute;
+
+  inset: -4px;
+
+  border-radius: 50%;
+
+  border:
+    1px dashed
+    rgba(255, 159, 28, 0.55);
+
+  animation:
+    rotateRing 8s
+    linear
+    infinite;
+
+  opacity: 0.6;
+}
+
+
+@keyframes rotateRing {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* ========================================
+   ICON SVG
+======================================== */
+
+.badge-icon-wrapper svg {
+  position: relative;
+
+  z-index: 2;
+
+  transition:
+    transform 0.35s ease;
+}
+
+
+.hero-badge:hover .badge-icon-wrapper svg {
+  transform:
+    rotate(-8deg)
+    scale(1.1);
+}
+
+
+/* ========================================
+   TEXT
+======================================== */
 
 .badge-text {
   font-size: 14px;
   font-weight: 500;
+
   color: #292524;
+
   letter-spacing: -0.2px;
+
+  position: relative;
+
+  z-index: 2;
+
+  opacity: 0;
+
+  animation:
+    textReveal
+    0.6s
+    0.25s
+    ease
+    forwards;
+}
+
+
+@keyframes textReveal {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+
+/* ========================================
+   SHINE EFFECT
+======================================== */
+
+.badge-shine {
+  position: absolute;
+
+  top: 0;
+  left: -80%;
+
+  width: 50%;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      110deg,
+      transparent,
+      rgba(255, 255, 255, 0.75),
+      transparent
+    );
+
+  transform:
+    skewX(-20deg);
+
+  pointer-events: none;
+
+  animation:
+    badgeShine
+    5s
+    ease-in-out
+    infinite;
+}
+
+
+@keyframes badgeShine {
+  0%,
+  65% {
+    left: -80%;
+  }
+
+  100% {
+    left: 130%;
+  }
+}
+
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 768px) {
+
+  .hero-badge {
+    padding:
+      6px 15px
+      6px 7px;
+
+    gap: 8px;
+  }
+
+  .badge-icon-wrapper {
+    width: 28px;
+    height: 28px;
+  }
+
+  .badge-text {
+    font-size: 12px;
+  }
+
+}
+
+
+@media (max-width: 480px) {
+
+  .hero-badge {
+    max-width: 90vw;
+  }
+
+  .badge-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
 }

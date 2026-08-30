@@ -3,7 +3,7 @@ import { ArrowUpRight, ArrowRight } from 'lucide-react';
 import './ServicesSection.css';
 
 export default function ServicesSection() {
-  const [expandedIndex, setExpandedIndex] = useState(1); // Default card 02 expanded
+  const [expandedIndex, setExpandedIndex] = useState(0);
 
   const services = [
     {
@@ -75,78 +75,155 @@ export default function ServicesSection() {
   return (
     <section id="services" className="services-section-container">
       <div className="services-inner">
+
+        {/* Decorative glow */}
+        <div className="services-glow services-glow-left" />
+        <div className="services-glow services-glow-right" />
+
         {/* Section Header */}
         <div className="services-header">
+
           <div className="services-header-left">
+
             <div className="services-badge">
               <div className="badge-circles">
                 <span className="circle-black" />
                 <span className="circle-orange" />
               </div>
-              <span className="badge-label">My Services</span>
+
+              <span className="badge-label">
+                My Services
+              </span>
             </div>
+
             <h2 className="services-title">
-              How I Bring <span className="highlight-text">Ideas to Life</span>
+              How I Bring{' '}
+              <span className="highlight-text">
+                Ideas to Life
+              </span>
+
               <span className="leaf-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 2C6.5 2 2 6.5 2 12c0 2.5 1 4.8 2.6 6.6L12 12V2z" fill="#292524" />
-                  <path d="M18 6c-3 0-5 2-5 5s2 5 5 5 5-2 5-5-2-5-5-5z" fill="#292524" opacity="0.8" />
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path
+                    d="M12 2C6.5 2 2 6.5 2 12c0 2.5 1 4.8 2.6 6.6L12 12V2z"
+                    fill="#292524"
+                  />
+                  <path
+                    d="M18 6c-3 0-5 2-5 5s2 5 5 5 5-2 5-5-2-5-5-5z"
+                    fill="#292524"
+                    opacity="0.8"
+                  />
                 </svg>
               </span>
             </h2>
+
           </div>
 
-          <a href="#all-services" className="view-all-services-btn">
+          <a
+            href="#all-services"
+            className="view-all-services-btn"
+          >
             <span>View All Services</span>
+
             <div className="btn-arrow-circle">
-              <ArrowRight size={14} />
+              <ArrowRight size={15} />
             </div>
           </a>
+
         </div>
 
-        {/* Services Accordion Cards List */}
+
+        {/* Services List */}
         <div className="services-list">
+
           {services.map((service, index) => {
             const isExpanded = expandedIndex === index;
 
             return (
               <div
                 key={service.id}
-                className={`service-card ${isExpanded ? 'expanded' : 'collapsed'}`}
-                onClick={() => toggleExpand(index)}
+                className={`service-card ${
+                  isExpanded ? 'expanded' : 'collapsed'
+                }`}
+                style={{
+                  '--delay': `${index * 0.08}s`,
+                }}
               >
-                {/* Card Top Row */}
-                <div className="service-card-top">
+
+                <button
+                  className="service-card-top"
+                  onClick={() => toggleExpand(index)}
+                  aria-expanded={isExpanded}
+                >
+
                   <div className="service-id-wrapper">
-                    <span className="service-id">{service.id}</span>
+
+                    <span className="service-id">
+                      {service.id}
+                    </span>
+
                     <span className="service-dotted-line" />
+
                   </div>
 
-                  <h3 className="service-title">{service.title}</h3>
+
+                  <h3 className="service-title">
+                    {service.title}
+                  </h3>
+
 
                   <div className="service-action-btn">
                     <ArrowUpRight size={18} />
                   </div>
-                </div>
 
-                {/* Expanded Details Body */}
-                {isExpanded && (
+                </button>
+
+
+                {/* Always rendered for smooth animation */}
+                <div
+                  className={`service-card-expanded-wrapper ${
+                    isExpanded ? 'open' : ''
+                  }`}
+                >
+
                   <div className="service-card-expanded-body">
+
                     <div className="service-tags-grid">
+
                       {service.tags.map((tag, i) => (
-                        <span key={i} className="service-tag-pill">
+                        <span
+                          key={i}
+                          className="service-tag-pill"
+                          style={{
+                            '--tag-delay': `${i * 0.08}s`,
+                          }}
+                        >
                           {tag}
                         </span>
                       ))}
+
                     </div>
 
-                    <p className="service-description">{service.description}</p>
+
+                    <p className="service-description">
+                      {service.description}
+                    </p>
+
                   </div>
-                )}
+
+                </div>
+
               </div>
             );
           })}
+
         </div>
+
       </div>
     </section>
   );

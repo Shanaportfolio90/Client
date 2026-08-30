@@ -1,63 +1,440 @@
+/* =========================================
+   SKILL TAGS CONTAINER
+========================================= */
+
 .skill-tags-container {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 12px;
+
+  position: relative;
+  z-index: 5;
 }
+
+
+/* =========================================
+   TAG ROW
+========================================= */
 
 .tags-row {
   display: flex;
   align-items: center;
   gap: 10px;
+
+  opacity: 0;
+
+  animation:
+    rowReveal
+    0.7s
+    cubic-bezier(0.16, 1, 0.3, 1)
+    forwards;
 }
+
+
+/* Staggered row entrance */
+
+.row-1 {
+  animation-delay: 0.8s;
+}
+
+.row-2 {
+  animation-delay: 1s;
+}
+
+.row-3 {
+  animation-delay: 1.2s;
+}
+
+
+@keyframes rowReveal {
+  from {
+    opacity: 0;
+    transform: translateX(45px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+
+/* =========================================
+   TAG PILL
+========================================= */
 
 .tag-pill {
+  position: relative;
+
+  overflow: hidden;
+
   padding: 10px 22px;
+
   border-radius: 9999px;
+
   font-size: 15px;
   font-weight: 700;
+
   letter-spacing: -0.2px;
-  transition: all 0.25s ease;
+
   cursor: pointer;
+
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  box-shadow:
+    0 4px 12px
+    rgba(0, 0, 0, 0.08);
+
+  transition:
+    transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.35s ease,
+    background-color 0.35s ease;
 }
 
-.tag-pill:hover {
-  transform: translateY(-2px) scale(1.03);
+
+/* Individual pill pop-in */
+
+.tag-pill {
+  animation:
+    pillPop
+    0.6s
+    cubic-bezier(0.34, 1.56, 0.64, 1)
+    backwards;
 }
 
-.tag-black {
-  background-color: #191412;
-  color: #FFFFFF;
+
+.row-1 .tag-pill:nth-child(1) {
+  animation-delay: 0.9s;
 }
 
-.tag-black:hover {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+.row-1 .tag-pill:nth-child(2) {
+  animation-delay: 1.05s;
 }
 
-.tag-orange {
-  background-color: #FF9F1C;
-  color: #191412;
+.row-2 .tag-pill {
+  animation-delay: 1.15s;
 }
 
-.tag-orange:hover {
-  box-shadow: 0 6px 16px rgba(255, 159, 28, 0.35);
+.row-3 .tag-pill:nth-child(1) {
+  animation-delay: 1.25s;
 }
+
+.row-3 .tag-pill:nth-child(2) {
+  animation-delay: 1.4s;
+}
+
+
+@keyframes pillPop {
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(15px)
+      scale(0.8);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+
+/* =========================================
+   BLACK TAG
+========================================= */
+
+.tag-pill.tag-black {
+  background:
+    linear-gradient(
+      135deg,
+      #191412,
+      #2a2421
+    );
+
+  color: #ffffff !important;
+}
+
+
+.tag-pill.tag-black:hover {
+  transform:
+    translateY(-4px)
+    scale(1.05);
+
+  box-shadow:
+    0 12px 25px
+    rgba(0, 0, 0, 0.28);
+}
+
+
+/* =========================================
+   ORANGE TAG
+========================================= */
+
+.tag-pill.tag-orange {
+  background:
+    linear-gradient(
+      135deg,
+      #ffb703,
+      #ff9f1c
+    );
+
+  color: #191412 !important;
+
+  box-shadow:
+    0 5px 16px
+    rgba(255, 159, 28, 0.25);
+}
+
+
+.tag-pill.tag-orange:hover {
+  transform:
+    translateY(-4px)
+    scale(1.05);
+
+  box-shadow:
+    0 12px 25px
+    rgba(255, 159, 28, 0.4);
+}
+
+
+/* =========================================
+   SHINE EFFECT
+========================================= */
+
+.tag-pill::before {
+  content: '';
+
+  position: absolute;
+
+  top: 0;
+  left: -120%;
+
+  width: 60%;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      110deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent
+    );
+
+  transform:
+    skewX(-20deg);
+
+  transition:
+    left 0.6s ease;
+
+  pointer-events: none;
+}
+
+
+.tag-pill:hover::before {
+  left: 150%;
+}
+
+
+/* =========================================
+   SUBTLE IDLE FLOAT
+========================================= */
+
+.row-1 {
+  animation:
+    rowReveal 0.7s 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+    subtleFloat 4s 1.5s ease-in-out infinite;
+}
+
+.row-2 {
+  animation:
+    rowReveal 0.7s 1s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+    subtleFloat 5s 1.7s ease-in-out infinite;
+}
+
+.row-3 {
+  animation:
+    rowReveal 0.7s 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+    subtleFloat 4.5s 1.9s ease-in-out infinite;
+}
+
+
+@keyframes subtleFloat {
+  0%,
+  100% {
+    transform:
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      translateY(-4px);
+  }
+}
+
+
+/* =========================================
+   SPARK BADGE
+========================================= */
 
 .spark-badge {
+  position: relative;
+
   width: 38px;
   height: 38px;
+
   border-radius: 50%;
-  background-color: #FF9F1C;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffb703,
+      #ff9f1c
+    );
+
   display: flex;
+
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 10px rgba(255, 159, 28, 0.3);
+
+  flex-shrink: 0;
+
+  box-shadow:
+    0 5px 15px
+    rgba(255, 159, 28, 0.35);
+
+  opacity: 0;
+
+  animation:
+    sparkReveal
+    0.6s
+    1.1s
+    cubic-bezier(0.34, 1.56, 0.64, 1)
+    forwards,
+    sparkPulse
+    3s
+    1.8s
+    ease-in-out
+    infinite;
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
+
+/* Spark entrance */
+
+@keyframes sparkReveal {
+  from {
+    opacity: 0;
+
+    transform:
+      scale(0)
+      rotate(-90deg);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      scale(1)
+      rotate(0deg);
+  }
+}
+
+
+/* Gentle pulse */
+
+@keyframes sparkPulse {
+  0%,
+  100% {
+    box-shadow:
+      0 5px 15px
+      rgba(255, 159, 28, 0.35);
+  }
+
+  50% {
+    box-shadow:
+      0 5px 25px
+      rgba(255, 159, 28, 0.7),
+      0 0 0 6px
+      rgba(255, 159, 28, 0.08);
+  }
+}
+
+
+/* Spark hover */
+
+.spark-badge:hover {
+  transform:
+    rotate(20deg)
+    scale(1.12);
+
+  box-shadow:
+    0 8px 25px
+    rgba(255, 159, 28, 0.55);
+}
+
+
+.spark-badge svg {
+  transition:
+    transform 0.4s ease;
+}
+
+
+.spark-badge:hover svg {
+  transform:
+    rotate(90deg)
+    scale(1.15);
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
 @media (max-width: 768px) {
+
   .skill-tags-container {
     align-items: center;
+    gap: 10px;
   }
+
+  .tags-row {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .tag-pill {
+    padding: 9px 16px;
+    font-size: 13px;
+  }
+
+  .spark-badge {
+    width: 34px;
+    height: 34px;
+  }
+
+}
+
+
+/* =========================================
+   ACCESSIBILITY
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .tags-row,
+  .tag-pill,
+  .spark-badge,
+  .wavy-bg-shape {
+    animation: none !important;
+    opacity: 1;
+  }
+
 }

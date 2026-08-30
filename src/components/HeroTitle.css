@@ -1,57 +1,497 @@
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Dancing+Script:wght@700&display=swap');
 
+
+/* =========================================
+   HERO TITLE CONTAINER
+========================================= */
+
 .hero-title-container {
   text-align: center;
   margin-bottom: 20px;
+
   position: relative;
   z-index: 10;
+
+  animation: heroContainerReveal 0.8s ease forwards;
 }
+
+
+@keyframes heroContainerReveal {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* =========================================
+   BACKGROUND GLOW
+========================================= */
+
+.hero-title-glow {
+  position: absolute;
+
+  width: 500px;
+  height: 180px;
+
+  left: 50%;
+  top: 35%;
+
+  transform: translate(-50%, -50%);
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(255, 159, 28, 0.14),
+      transparent 65%
+    );
+
+  filter: blur(20px);
+
+  z-index: -1;
+
+  pointer-events: none;
+
+  animation: glowPulse 4s ease-in-out infinite;
+}
+
+
+@keyframes glowPulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+}
+
+
+/* =========================================
+   HEADLINE
+========================================= */
 
 .hero-headline {
-  font-size: 64px;
+  font-size: clamp(48px, 5vw, 72px);
+
   font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -1.5px;
-  margin: 0 0 10px 0;
-  display: inline-block;
+
+  line-height: 1.08;
+
+  letter-spacing: -1.8px;
+
+  margin: 0 0 12px;
+
+  display: flex;
+
+  justify-content: center;
+  align-items: baseline;
+
+  gap: 12px;
+
   position: relative;
 }
+
+
+/* =========================================
+   "I'M" ANIMATION
+========================================= */
 
 .text-dark {
-  color: #1C1917;
+  color: #1c1917;
+
+  display: inline-block;
+
+  animation:
+    darkTextReveal
+    0.7s
+    cubic-bezier(0.16, 1, 0.3, 1)
+    forwards;
+
+  opacity: 0;
 }
 
-.text-highlight {
-  font-family: 'Caveat', 'Dancing Script', cursive;
-  font-size: 1.18em;
-  font-weight: 700;
-  color: #FF9F1C;
-  position: relative;
-  display: inline-block;
-  vertical-align: middle;
-  line-height: 1;
+
+@keyframes darkTextReveal {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
+
+
+/* =========================================
+   NAME
+========================================= */
+
+.text-highlight {
+  font-family:
+    'Caveat',
+    'Dancing Script',
+    cursive;
+
+  font-size: 1.18em;
+
+  font-weight: 700;
+
+  position: relative;
+
+  display: inline-block;
+
+  vertical-align: middle;
+
+  line-height: 1;
+
+  padding-bottom: 8px;
+
+  opacity: 0;
+
+  animation:
+    nameReveal
+    0.9s
+    0.25s
+    cubic-bezier(0.16, 1, 0.3, 1)
+    forwards;
+}
+
+
+@keyframes nameReveal {
+  from {
+    opacity: 0;
+    transform: translateY(25px) rotate(-2deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+
+/* Animated Gradient Text */
+
+.name-text {
+  display: inline-block;
+
+  background:
+    linear-gradient(
+      90deg,
+      #ff9f1c,
+      #ffb703,
+      #ff8c00,
+      #ff9f1c
+    );
+
+  background-size: 250% auto;
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+
+  animation:
+    textGradientMove
+    6s
+    linear
+    infinite;
+}
+
+
+@keyframes textGradientMove {
+  from {
+    background-position: 0% center;
+  }
+
+  to {
+    background-position: 250% center;
+  }
+}
+
+
+/* =========================================
+   NAME UNDERLINE
+========================================= */
+
+.name-underline {
+  position: absolute;
+
+  left: 5%;
+  bottom: 0;
+
+  width: 90%;
+  height: 5px;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #ffb703,
+      #ff9f1c,
+      transparent
+    );
+
+  transform-origin: left;
+
+  animation:
+    underlineDraw
+    1s
+    0.8s
+    cubic-bezier(0.16, 1, 0.3, 1)
+    forwards;
+
+  transform: scaleX(0);
+
+  opacity: 0.8;
+}
+
+
+@keyframes underlineDraw {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+
+/* =========================================
+   DECORATIVE ICON
+========================================= */
 
 .leaf-icon {
   position: absolute;
-  top: -10px;
-  right: -24px;
+
+  top: -12px;
+  right: -28px;
+
   display: inline-flex;
+
+  color: #292524;
+
+  transform-origin: bottom left;
+
+  animation:
+    leafFloat
+    3s
+    ease-in-out
+    infinite;
+
+  animation-delay: 1s;
 }
+
+
+@keyframes leafFloat {
+  0%,
+  100% {
+    transform:
+      rotate(-5deg)
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      rotate(8deg)
+      translateY(-6px);
+  }
+}
+
+
+/* =========================================
+   SUBHEADING
+========================================= */
 
 .hero-subheading {
   font-size: 20px;
-  color: #57534E;
+
+  color: #57534e;
+
   font-weight: 400;
+
   margin: 0;
+
   letter-spacing: -0.3px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 9px;
+
+  opacity: 0;
+
+  animation:
+    subheadingReveal
+    0.8s
+    0.65s
+    cubic-bezier(0.16, 1, 0.3, 1)
+    forwards;
 }
 
+
+@keyframes subheadingReveal {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* Orange Separator Dots */
+
+.hero-subheading i {
+  color: #ff9f1c;
+
+  font-style: normal;
+
+  font-size: 18px;
+
+  animation:
+    separatorPulse
+    2s
+    ease-in-out
+    infinite;
+}
+
+
+@keyframes separatorPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+
+  50% {
+    transform: scale(1.4);
+    opacity: 1;
+  }
+}
+
+
+/* =========================================
+   HOVER EFFECT
+========================================= */
+
+.text-highlight:hover .name-text {
+  animation-duration: 2s;
+
+  filter:
+    drop-shadow(
+      0 5px 10px
+      rgba(255, 159, 28, 0.2)
+    );
+}
+
+
+.text-highlight:hover {
+  transform: translateY(-2px) rotate(-1deg);
+
+  transition: transform 0.3s ease;
+
+  cursor: default;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 900px) {
+
+  .hero-headline {
+    font-size: clamp(42px, 7vw, 60px);
+  }
+
+}
+
+
 @media (max-width: 768px) {
+
+  .hero-title-container {
+    margin-bottom: 16px;
+  }
+
   .hero-headline {
     font-size: 42px;
+
+    gap: 8px;
+
+    flex-wrap: wrap;
   }
+
+  .text-highlight {
+    padding-bottom: 5px;
+  }
+
   .hero-subheading {
     font-size: 16px;
+
+    flex-wrap: wrap;
+
+    gap: 5px 8px;
+
+    padding: 0 15px;
+
+    line-height: 1.6;
   }
+
+  .leaf-icon {
+    transform: scale(0.8);
+
+    right: -20px;
+    top: -10px;
+  }
+
+  .hero-title-glow {
+    width: 350px;
+    height: 150px;
+  }
+
+}
+
+
+@media (max-width: 480px) {
+
+  .hero-headline {
+    font-size: 36px;
+
+    line-height: 1.15;
+
+    flex-direction: column;
+
+    gap: 2px;
+  }
+
+  .text-highlight {
+    font-size: 1.15em;
+  }
+
+  .hero-subheading {
+    font-size: 14px;
+
+    padding: 0 10px;
+  }
+
+  .name-underline {
+    height: 3px;
+  }
+
 }

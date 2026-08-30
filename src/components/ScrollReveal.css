@@ -1,0 +1,41 @@
+/* ==========================================================================
+   SCROLL REVEAL FADE-IN ANIMATIONS
+   ========================================================================== */
+
+.scroll-reveal {
+  opacity: 0;
+  will-change: opacity, transform;
+  transition-property: opacity, transform;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Fade Up (Default smooth rise) */
+.scroll-reveal.fade-up {
+  transform: translateY(40px);
+}
+
+/* Fade Down */
+.scroll-reveal.fade-down {
+  transform: translateY(-40px);
+}
+
+/* Fade Left */
+.scroll-reveal.fade-left {
+  transform: translateX(40px);
+}
+
+/* Fade Right */
+.scroll-reveal.fade-right {
+  transform: translateX(-40px);
+}
+
+/* Zoom In */
+.scroll-reveal.zoom-in {
+  transform: scale(0.92);
+}
+
+/* Visible Active State */
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0) translateX(0) scale(1);
+}

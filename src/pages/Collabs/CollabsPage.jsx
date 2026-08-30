@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight, ExternalLink, Globe, BookOpen, Sparkles, CheckCircle } from 'lucide-react';
 import Navbar from '../../components/Navbar';
 import ContactSection from '../../components/ContactSection';
 import PricingSection from '../../components/PricingSection';
 import FooterSection from '../../components/FooterSection';
+import ScrollReveal from '../../components/ScrollReveal';
+import { API_BASE_URL } from '../../config';
 import yamkitchImg from '../../assets/yamkitch-mockup.jpg';
 import lekhokTripuraImg from '../../assets/lekhok-tripura-mockup.jpg';
 import yamkitchLogo from '../../assets/yamkitch-logo.png';
@@ -20,6 +22,18 @@ import './CollabsPage.css';
 export default function CollabsPage() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [activeFilter, setActiveFilter] = useState('All');
+  const [dbCards, setDbCards] = useState([]);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/collabs`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setDbCards(data);
+        }
+      })
+      .catch((err) => console.error('Failed to load collab cards from DB:', err));
+  }, []);
 
   const toggleDarkMode = () => {
     setIsDarkMode((prev) => !prev);
@@ -112,7 +126,23 @@ export default function CollabsPage() {
     },
   ];
 
-  const filteredProjects = brandProjects.filter((item) => {
+  const formattedDbCards = dbCards.map((c) => ({
+    id: c._id,
+    brand: c.brandName,
+    category: c.category,
+    title: c.title,
+    websiteUrl: c.websiteUrl,
+    displayUrl: c.displayUrl || (c.websiteUrl && c.websiteUrl !== '#' ? c.websiteUrl.replace(/^https?:\/\//, '') : ''),
+    image: c.imageUrl,
+    description: c.description,
+    tags: c.tags || [],
+  }));
+
+  const allProjects = [...formattedDbCards, ...brandProjects];
+
+  const categoriesList = ['All', ...new Set(allProjects.map((item) => item.category))];
+
+  const filteredProjects = allProjects.filter((item) => {
     if (activeFilter === 'All') return true;
     return item.category === activeFilter;
   });
@@ -343,6 +373,90 @@ export default function CollabsPage() {
           </div>
         </section>
 
+        {/* Dynamic Database Brand Showcases */}
+        {dbCards.map((card) => (
+          <section key={card._id} className="featured-brand-showcase tech-showcase">
+            <div className="showcase-inner">
+              <div className="brand-showcase-header">
+                <div className="brand-logo-pill">
+                  <Sparkles size={14} />
+                  <span>{card.brandName}</span>
+                </div>
+                <h2 className="brand-showcase-title">
+                  <span>{card.brandName}</span>
+                  <span className="dot-divider">•</span>
+                  <span className="highlight-text">{card.category} Showcase</span>
+                </h2>
+                <p className="brand-showcase-tagline">{card.title}</p>
+              </div>
+
+              <div className="showcase-project-card">
+                <div className="showcase-image-col">
+                  <div className="showcase-img-wrap">
+                    <img src={card.imageUrl} alt={card.title} className="showcase-mockup-img" />
+                    <span className="showcase-badge-pill">{card.category}</span>
+                  </div>
+                </div>
+
+                <div className="showcase-info-col">
+                  {card.tags && card.tags.length > 0 && (
+                    <div className="showcase-tags-row">
+                      <span className="tag-pill">{card.brandName}</span>
+                      {card.tags.map((t, idx) => (
+                        <span key={idx} className="tag-pill">{t}</span>
+                      ))}
+                    </div>
+                  )}
+
+                  <h3 className="project-headline">{card.title}</h3>
+                  <p className="project-description">{card.description}</p>
+
+                  {card.websiteUrl && card.websiteUrl !== '#' && (
+                    <a
+                      href={card.websiteUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="visit-live-site-btn"
+                    >
+                      <Globe size={18} />
+                      <span>{card.ctaButtonText || `Explore ${card.brandName}: ${card.displayUrl || 'Website'}`}</span>
+                      <ExternalLink size={16} />
+                    </a>
+                  )}
+
+                  {card.hasActionCta && (
+                    <div className="brand-action-cta-box">
+                      <div className="cta-box-text">
+                        {card.actionCtaTitle && <strong>{card.actionCtaTitle}</strong>}
+                        {card.actionCtaSubtitle && <span>{card.actionCtaSubtitle}</span>}
+                      </div>
+                      {card.actionCtaBtnText && (
+                        <a
+                          href={(() => {
+                            const raw = (card.actionCtaLink || '').trim();
+                            if (raw.startsWith('http://') || raw.startsWith('https://')) return raw;
+                            const digits = raw.replace(/\D/g, '');
+                            const phone = digits.length === 10 ? `91${digits}` : digits || '918258892262';
+                            return `https://wa.me/${phone}?text=${encodeURIComponent(
+                              `Hi Snaha! I am interested in ${card.brandName || 'collaboration'} details.`
+                            )}`;
+                          })()}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="brand-action-btn"
+                        >
+                          <span>{card.actionCtaBtnText}</span>
+                          <ArrowUpRight size={18} />
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </section>
+        ))}
+
         {/* ==================================================================
             ALL BRAND COLLABORATIONS PORTFOLIO & FILTER GRID
             ================================================================== */}
@@ -358,7 +472,7 @@ export default function CollabsPage() {
 
             {/* Filter Tabs */}
             <div className="filter-tabs-row">
-              {['All', 'Tech & Web', 'Book Publishers', 'Shorts & Reels'].map((cat) => (
+              {categoriesList.map((cat) => (
                 <button
                   key={cat}
                   type="button"
@@ -410,12 +524,18 @@ export default function CollabsPage() {
         </section>
 
         {/* Custom Pricing Proposal Form Section */}
-        <PricingSection />
+        <ScrollReveal variant="fade-up">
+          <PricingSection />
+        </ScrollReveal>
       </main>
 
       {/* Contact & Footer */}
-      <ContactSection />
-      <FooterSection />
+      <ScrollReveal variant="fade-up">
+        <ContactSection />
+      </ScrollReveal>
+      <ScrollReveal variant="fade-up">
+        <FooterSection />
+      </ScrollReveal>
     </div>
   );
 }
