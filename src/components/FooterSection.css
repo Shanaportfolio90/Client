@@ -121,6 +121,14 @@
   color: #FF9F1C;
 }
 
+.footer-logo-img {
+  height: 38px;
+  max-width: 150px;
+  object-fit: contain;
+  filter: brightness(0);
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
 .footer-bio-text {
   font-size: 15px;
   line-height: 1.6;
@@ -318,6 +326,10 @@
 
 .dark-mode .footer-logo .logo-text {
   color: #FFFFFF;
+}
+
+.dark-mode .footer-logo-img {
+  filter: brightness(0) invert(1);
 }
 
 .dark-mode .footer-bio-text,

@@ -221,8 +221,7 @@ export default function ContactSection() {
               <div className="info-block">
                 <h4 className="info-title">Address</h4>
                 <p className="info-text">
-                  Kolkata, West Bengal, India<br />
-                  New Jersey 45463
+                  Agartala, Tripura West, India
                 </p>
               </div>
 
@@ -230,7 +229,7 @@ export default function ContactSection() {
                 <h4 className="info-title">Contact</h4>
                 <p className="info-text">
                   Phone : +91 98765-43210<br />
-                  Email : snaha.chakraborty@gmail.com
+                  Email : connect.snaha@gmail.com
                 </p>
               </div>
 

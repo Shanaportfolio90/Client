@@ -27,7 +27,6 @@ export default function Navbar({ isDarkMode, toggleDarkMode, activePage }) {
     { name: 'Shorts Series', path: '/#series' },
     { name: 'Promotions', path: '/#book-promo' },
     { name: 'About Me', path: '/#about' },
-    { name: 'Testimonials', path: '/#testimonials' },
   ];
 
   const currentTab =
@@ -36,6 +35,14 @@ export default function Navbar({ isDarkMode, toggleDarkMode, activePage }) {
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
+  };
+
+  const handleLogoClick = (e) => {
+    closeMobileMenu();
+    if (location.pathname === '/') {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   return (
@@ -49,15 +56,17 @@ export default function Navbar({ isDarkMode, toggleDarkMode, activePage }) {
         <Link
           to="/"
           className="navbar-logo"
-          onClick={closeMobileMenu}
+          onClick={handleLogoClick}
         >
           <div className="logo-badge">
             <span className="logo-letter-s">S</span>
           </div>
 
-          <span className="logo-text">
-            Snaha<span className="logo-dot">.</span>
-          </span>
+          <img
+            src="/Logo_Snaha.png"
+            alt="Snaha Logo"
+            className="navbar-logo-img"
+          />
         </Link>
 
         {/* Desktop Navigation */}

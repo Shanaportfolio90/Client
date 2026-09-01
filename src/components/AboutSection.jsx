@@ -147,8 +147,8 @@ export default function AboutSection() {
             {/* CTA */}
             <div className="about-cta-row reveal-up delay-4">
 
-              <a href="#portfolio" className="download-cv-btn">
-                <span>Download Portfolio</span>
+              <a href="/collabs" className="download-cv-btn">
+                <span>View Collabs & Projects</span>
 
                 <div className="btn-arrow-circle">
                   <ArrowRight size={15} />

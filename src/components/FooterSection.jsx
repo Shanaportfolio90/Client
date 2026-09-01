@@ -46,9 +46,7 @@ export default function FooterSection() {
                   <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="#191412" stroke="#191412" strokeWidth="1" />
                 </svg>
               </div>
-              <span className="logo-text">
-                Snaha<span className="logo-dot">.</span>
-              </span>
+              <img src="/Logo_Snaha.png" alt="Snaha Logo" className="footer-logo-img" />
             </a>
 
             <p className="footer-bio-text">
@@ -90,11 +88,8 @@ export default function FooterSection() {
             <h4 className="footer-col-title">Navigation</h4>
             <ul className="footer-links-list">
               <li><a href="#home">Home</a></li>
-              <li><a href="#services">Services</a></li>
-              <li><a href="#portfolio">Projects</a></li>
-              <li><a href="#blogs">Blogs</a></li>
+              <li><a href="/collabs">Collabs</a></li>
               <li><a href="#about">About Me</a></li>
-              <li><a href="#faqs">FAQs</a></li>
             </ul>
           </div>
 
@@ -104,8 +99,8 @@ export default function FooterSection() {
             <ul className="footer-info-list">
               <li>+91 98765-43210</li>
               <li>www.snahachakraborty.com</li>
-              <li>snaha.chakraborty@gmail.com</li>
-              <li>Kolkata, West Bengal, India</li>
+              <li>connect.snaha@gmail.com</li>
+              <li>Agartala, Tripura West, India</li>
             </ul>
           </div>
 
