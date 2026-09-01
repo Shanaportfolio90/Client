@@ -89,6 +89,7 @@ export default function FooterSection() {
             <ul className="footer-links-list">
               <li><a href="#home">Home</a></li>
               <li><a href="/collabs">Collabs</a></li>
+              <li><a href="/blogs">Blogs</a></li>
               <li><a href="#about">About Me</a></li>
             </ul>
           </div>
@@ -98,7 +99,7 @@ export default function FooterSection() {
             <h4 className="footer-col-title">Contact</h4>
             <ul className="footer-info-list">
               <li>+91 98765-43210</li>
-              <li>www.snahachakraborty.com</li>
+              <li>www.snaha.in</li>
               <li>connect.snaha@gmail.com</li>
               <li>Agartala, Tripura West, India</li>
             </ul>

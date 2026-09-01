@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import JoditEditor from 'jodit-react';
 import {
   Lock,
   Mail,
@@ -29,7 +30,11 @@ import {
   Sparkles,
   Edit3,
   Save,
-  XCircle
+  XCircle,
+  BookOpen,
+  Menu,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import './AdminPanel.css';
 import { API_BASE_URL } from '../config';
@@ -38,6 +43,7 @@ import AdminCollabsManager from '../components/AdminCollabsManager';
 
 export default function AdminPanel() {
   const [token, setToken] = useState(localStorage.getItem('snaha_admin_token') || '');
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -48,11 +54,122 @@ export default function AdminPanel() {
   const [contacts, setContacts] = useState([]);
   const [mediaList, setMediaList] = useState([]);
   const [collabsList, setCollabsList] = useState([]);
+  const [blogsList, setBlogsList] = useState([]);
+  const [adsList, setAdsList] = useState([]);
+  const [categoriesList, setCategoriesList] = useState([
+    { _id: 'cat-1', name: 'Brand Collab' },
+    { _id: 'cat-2', name: 'Book Promotion' },
+    { _id: 'cat-3', name: 'Shorts Series' },
+    { _id: 'cat-4', name: 'Strategy & Tips' },
+  ]);
+  const [newCatInput, setNewCatInput] = useState('');
+  const [addingCategory, setAddingCategory] = useState(false);
+  const [showCatManager, setShowCatManager] = useState(false);
   const [loadingData, setLoadingData] = useState(false);
 
-  const [activeTab, setActiveTab] = useState('media'); // 'media' | 'collabs' | 'proposals' | 'contacts'
+  const [activeTab, setActiveTab] = useState('blogs'); // 'blogs' | 'media' | 'collabs' | 'proposals' | 'contacts'
   const [statusFilter, setStatusFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Blog Form & Jodit Editor State
+  const [blogEditingId, setBlogEditingId] = useState(null);
+  const [publishingBlog, setPublishingBlog] = useState(false);
+  const [uploadingBlogCover, setUploadingBlogCover] = useState(false);
+  const blogEditorRef = useRef(null);
+
+  const joditConfig = useMemo(() => ({
+    readonly: false,
+    height: 400,
+    placeholder: 'Write or paste (Ctrl+V) your rich blog post here with headings, formatting, lists, quotes...',
+    askBeforePasteHTML: false,
+    askBeforePasteFromWord: false,
+    defaultActionOnPaste: 'insert_clear_html',
+    processPasteHTML: true,
+    theme: 'default',
+    uploader: {
+      url: `${API_BASE_URL}/api/admin/upload-jodit`,
+      format: 'json',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      isSuccess: (resp) => resp && resp.success,
+      process: (resp) => ({
+        files: resp.files || [],
+        path: '',
+        baseurl: '',
+        error: resp.error || null,
+        msg: resp.msg || '',
+      }),
+      defaultHandlerSuccess: function (data) {
+        const files = data.files || [data.url];
+        if (files && files.length) {
+          for (let i = 0; i < files.length; i++) {
+            this.selection.insertImage(files[i]);
+          }
+        }
+      },
+    },
+    events: {
+      afterInsertImage: function (img) {
+        if (img && img.src && (img.src.startsWith('blob:') || img.src.startsWith('data:image'))) {
+          fetch(img.src)
+            .then((res) => res.blob())
+            .then((blob) => {
+              const reader = new FileReader();
+              reader.readAsDataURL(blob);
+              reader.onloadend = () => {
+                fetch(`${API_BASE_URL}/api/admin/upload`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                  },
+                  body: JSON.stringify({ image: reader.result }),
+                })
+                  .then((res) => res.json())
+                  .then((data) => {
+                    if (data && data.url) {
+                      img.src = data.url;
+                    }
+                  })
+                  .catch((err) => console.error('Cloudinary auto upload error:', err));
+              };
+            });
+        }
+      },
+    },
+    buttons: [
+      'bold', 'italic', 'underline', 'strikethrough', '|',
+      'ul', 'ol', 'indent', 'outdent', '|',
+      'font', 'fontsize', 'paragraph', '|',
+      'image', 'table', 'link', '|',
+      'align', 'undo', 'redo', '|',
+      'hr', 'eraser', 'fullsize'
+    ],
+    controls: {
+      ul: {
+        command: 'insertUnorderedList',
+        tags: ['ul'],
+        tooltip: 'Insert Bullet List'
+      },
+      ol: {
+        command: 'insertOrderedList',
+        tags: ['ol'],
+        tooltip: 'Insert Numbered List'
+      }
+    }
+  }), [token]);
+
+  const [blogForm, setBlogForm] = useState({
+    title: '',
+    category: 'Brand Collab',
+    summary: '',
+    content: '',
+    coverImage: '',
+    author: 'Snaha Chakraborty',
+    date: new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }),
+    readTime: '5 min read',
+  });
 
   // Media Form & Edit State
   const [editingId, setEditingId] = useState(null);
@@ -107,11 +224,25 @@ export default function AdminPanel() {
       // Fetch Collabs List
       const reqCollabs = fetch(`${API_BASE_URL}/api/collabs`);
 
-      const [resInquiries, resContacts, resMedia, resCollabs] = await Promise.all([
+      // Fetch Blogs List
+      const reqBlogs = fetch(`${API_BASE_URL}/api/blogs`);
+
+      // Fetch Categories List
+      const reqCategories = fetch(`${API_BASE_URL}/api/categories`);
+
+      // Fetch Ads List
+      const reqAds = fetch(`${API_BASE_URL}/api/admin/ads`, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+
+      const [resInquiries, resContacts, resMedia, resCollabs, resBlogs, resCategories, resAds] = await Promise.all([
         reqInquiries,
         reqContacts,
         reqMedia,
         reqCollabs,
+        reqBlogs,
+        reqCategories,
+        reqAds,
       ]);
 
       if (resInquiries.status === 401 || resContacts.status === 401) {
@@ -123,6 +254,14 @@ export default function AdminPanel() {
       if (resContacts.ok) setContacts(await resContacts.json());
       if (resMedia.ok) setMediaList(await resMedia.json());
       if (resCollabs.ok) setCollabsList(await resCollabs.json());
+      if (resBlogs.ok) setBlogsList(await resBlogs.json());
+      if (resAds.ok) setAdsList(await resAds.json());
+      if (resCategories.ok) {
+        const catsData = await resCategories.json();
+        if (Array.isArray(catsData) && catsData.length > 0) {
+          setCategoriesList(catsData);
+        }
+      }
     } catch (err) {
       console.error('Failed to fetch admin data:', err);
     } finally {
@@ -245,6 +384,368 @@ export default function AdminPanel() {
       date: new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }),
     });
     setStatusState({ message: '', type: 'info' });
+  };
+
+  // Blog Handlers
+  const handleBlogCoverUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Cover image size must be less than 10MB.');
+      return;
+    }
+
+    setUploadingBlogCover(true);
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/admin/upload`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ image: reader.result }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          setBlogForm((prev) => ({ ...prev, coverImage: data.url }));
+        } else {
+          alert(data.message || 'Image upload failed.');
+        }
+      } catch (err) {
+        console.error('Blog cover image upload error:', err);
+        alert('Failed to upload image to Cloudinary.');
+      } finally {
+        setUploadingBlogCover(false);
+      }
+    };
+  };
+
+  const [uploadingInlineImage, setUploadingInlineImage] = useState(false);
+
+  const handleInlineImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Image size must be less than 10MB.');
+      return;
+    }
+
+    setUploadingInlineImage(true);
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/admin/upload`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ image: reader.result }),
+        });
+        const data = await res.json();
+        if (res.ok && data.url) {
+          const imgHtml = `<p><img src="${data.url}" alt="Article Image" style="max-width: 100%; border-radius: 12px; margin: 16px 0;" /></p>`;
+          if (blogEditorRef.current && blogEditorRef.current.editor) {
+            blogEditorRef.current.editor.selection.insertHTML(imgHtml);
+          } else {
+            setBlogForm((prev) => ({ ...prev, content: prev.content + imgHtml }));
+          }
+        } else {
+          alert(data.message || 'Image upload failed.');
+        }
+      } catch (err) {
+        console.error('Inline image upload error:', err);
+        alert('Failed to upload image to Cloudinary.');
+      } finally {
+        setUploadingInlineImage(false);
+      }
+    };
+  };
+
+  const handlePublishBlog = async (e) => {
+    e.preventDefault();
+    if (!blogForm.title || !blogForm.coverImage || !blogForm.content) {
+      alert('Please fill in Title, Cover Image, and Content.');
+      return;
+    }
+
+    setPublishingBlog(true);
+    const isEdit = Boolean(blogEditingId);
+    const endpoint = isEdit
+      ? `${API_BASE_URL}/api/admin/blogs/${blogEditingId}`
+      : `${API_BASE_URL}/api/admin/blogs`;
+    const method = isEdit ? 'PUT' : 'POST';
+
+    try {
+      const res = await fetch(endpoint, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(blogForm),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        alert(isEdit ? 'Blog post updated successfully!' : 'Blog post published successfully!');
+        resetBlogForm();
+        fetchData(token);
+      } else {
+        alert(data.message || 'Action failed.');
+      }
+    } catch (err) {
+      console.error('Error saving blog post:', err);
+      alert('Server connection error.');
+    } finally {
+      setPublishingBlog(false);
+    }
+  };
+
+  const handleEditBlog = (blog) => {
+    setBlogEditingId(blog._id);
+    setBlogForm({
+      title: blog.title || '',
+      category: blog.category || 'Brand Collab',
+      summary: blog.summary || '',
+      content: blog.content || '',
+      coverImage: blog.coverImage || '',
+      author: blog.author || 'Snaha Chakraborty',
+      date: blog.date || new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }),
+      readTime: blog.readTime || '5 min read',
+    });
+    window.scrollTo({ top: 300, behavior: 'smooth' });
+  };
+
+  const handleDeleteBlog = async (id) => {
+    if (!window.confirm('Delete this blog post permanently?')) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/admin/blogs/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        setBlogsList((prev) => prev.filter((b) => b._id !== id));
+      }
+    } catch (err) {
+      console.error('Error deleting blog:', err);
+    }
+  };
+
+  const resetBlogForm = () => {
+    setBlogEditingId(null);
+    setBlogForm({
+      title: '',
+      category: categoriesList[0]?.name || 'Brand Collab',
+      summary: '',
+      content: '',
+      coverImage: '',
+      author: 'Snaha Chakraborty',
+      date: new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }),
+      readTime: '5 min read',
+    });
+  };
+
+  // Advertisement Handlers
+  const [adEditingId, setAdEditingId] = useState(null);
+  const [publishingAd, setPublishingAd] = useState(false);
+  const [uploadingAdImage, setUploadingAdImage] = useState(false);
+  const [adForm, setAdForm] = useState({
+    title: '',
+    tagline: '',
+    imageUrl: '',
+    link: '',
+    badgeText: 'Sponsored',
+    active: true,
+  });
+
+  const handleAdImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Image size must be less than 10MB.');
+      return;
+    }
+
+    setUploadingAdImage(true);
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/admin/upload`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ image: reader.result }),
+        });
+        const data = await res.json();
+        if (res.ok && data.url) {
+          setAdForm((prev) => ({ ...prev, imageUrl: data.url }));
+        } else {
+          alert(data.message || 'Image upload failed.');
+        }
+      } catch (err) {
+        console.error('Ad image upload error:', err);
+        alert('Failed to upload image to Cloudinary.');
+      } finally {
+        setUploadingAdImage(false);
+      }
+    };
+  };
+
+  const handlePublishAd = async (e) => {
+    e.preventDefault();
+    if (!adForm.title || !adForm.imageUrl) {
+      alert('Please fill in Ad Title and Banner Image.');
+      return;
+    }
+
+    setPublishingAd(true);
+    const isEdit = Boolean(adEditingId);
+    const endpoint = isEdit
+      ? `${API_BASE_URL}/api/admin/ads/${adEditingId}`
+      : `${API_BASE_URL}/api/admin/ads`;
+    const method = isEdit ? 'PUT' : 'POST';
+
+    try {
+      const res = await fetch(endpoint, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(adForm),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setStatusState({
+          message: isEdit ? 'Advertisement updated successfully!' : 'New Advertisement card created live!',
+          type: 'success',
+        });
+        setAdForm({
+          title: '',
+          tagline: '',
+          imageUrl: '',
+          link: '',
+          badgeText: 'Sponsored',
+          active: true,
+        });
+        setAdEditingId(null);
+        fetchData(token);
+      } else {
+        alert(data.message || 'Failed to save advertisement.');
+      }
+    } catch (err) {
+      console.error('Save ad error:', err);
+      alert('Failed to save advertisement card.');
+    } finally {
+      setPublishingAd(false);
+    }
+  };
+
+  const handleEditAd = (ad) => {
+    setAdEditingId(ad._id);
+    setAdForm({
+      title: ad.title || '',
+      tagline: ad.tagline || '',
+      imageUrl: ad.imageUrl || '',
+      link: ad.link || '',
+      badgeText: ad.badgeText || 'Sponsored',
+      active: ad.active !== undefined ? ad.active : true,
+    });
+    window.scrollTo({ top: 300, behavior: 'smooth' });
+  };
+
+  const handleDeleteAd = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this Advertisement card?')) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/admin/ads/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        setStatusState({ message: 'Advertisement deleted successfully!', type: 'success' });
+        fetchData(token);
+      } else {
+        alert('Failed to delete advertisement.');
+      }
+    } catch (err) {
+      console.error('Delete ad error:', err);
+      alert('Error deleting advertisement.');
+    }
+  };
+
+  const resetAdForm = () => {
+    setAdEditingId(null);
+    setAdForm({
+      title: '',
+      tagline: '',
+      imageUrl: '',
+      link: '',
+      badgeText: 'Sponsored',
+      active: true,
+    });
+  };
+
+  // Category Handlers
+  const handleAddCategory = async (e) => {
+    e.preventDefault();
+    if (!newCatInput.trim()) return;
+
+    setAddingCategory(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/admin/categories`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ name: newCatInput.trim() }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setCategoriesList((prev) => [...prev, data.category]);
+        setBlogForm((prev) => ({ ...prev, category: data.category.name }));
+        setNewCatInput('');
+      } else {
+        alert(data.message || 'Failed to add category.');
+      }
+    } catch (err) {
+      console.error('Error adding category:', err);
+      alert('Failed to connect to server.');
+    } finally {
+      setAddingCategory(false);
+    }
+  };
+
+  const handleDeleteCategory = async (id, name) => {
+    if (!window.confirm(`Delete category "${name}"?`)) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/admin/categories/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        setCategoriesList((prev) => prev.filter((c) => c._id !== id));
+      } else {
+        // Fallback for default local categories
+        setCategoriesList((prev) => prev.filter((c) => c._id !== id && c.name !== name));
+      }
+    } catch (err) {
+      console.error('Error deleting category:', err);
+      setCategoriesList((prev) => prev.filter((c) => c._id !== id && c.name !== name));
+    }
   };
 
   // Media Publish / Update Handler
@@ -468,56 +969,141 @@ export default function AdminPanel() {
   // AUTHENTICATED: ADMIN DASHBOARD
   // ==========================================================================
   return (
-    <div className="admin-dashboard-container">
-      {/* Top Header Navigation */}
-      <header className="admin-header">
-        <div className="admin-header-inner">
-          <div className="header-left">
-            <a href="/" className="admin-brand-logo">
-              <span className="badge-dot" />
-              <span>Snaha Portfolio Admin</span>
-            </a>
+    <div className={`admin-app-layout ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+      {/* Collapsible Left Sidebar */}
+      <aside className="admin-sidebar">
+        <div className="sidebar-top-header">
+          <a href="/" className="sidebar-brand">
+            <img src="/Logo_Snaha.png" alt="Snaha Logo" className="sidebar-logo-img" />
+            <span className="brand-title">Snaha Admin</span>
+          </a>
+          <button
+            type="button"
+            className="sidebar-toggle-btn"
+            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+            title={isSidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+          >
+            {isSidebarCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+          </button>
+        </div>
+
+        <nav className="sidebar-nav-menu">
+          <button
+            type="button"
+            className={`sidebar-nav-item ${activeTab === 'blogs' ? 'active' : ''}`}
+            onClick={() => setActiveTab('blogs')}
+            title="Blogs Manager"
+          >
+            <BookOpen size={20} className="nav-icon" />
+            <span className="nav-label">Blogs Manager</span>
+            <span className="nav-count-badge">{blogsList.length}</span>
+          </button>
+
+          <button
+            type="button"
+            className={`sidebar-nav-item ${activeTab === 'media' ? 'active' : ''}`}
+            onClick={() => setActiveTab('media')}
+            title="Videos & Media Manager"
+          >
+            <Film size={20} className="nav-icon" />
+            <span className="nav-label">Videos & Media</span>
+            <span className="nav-count-badge">{totalMedia}</span>
+          </button>
+
+          <button
+            type="button"
+            className={`sidebar-nav-item ${activeTab === 'collabs' ? 'active' : ''}`}
+            onClick={() => setActiveTab('collabs')}
+            title="Collabs Manager"
+          >
+            <Sparkles size={20} className="nav-icon" />
+            <span className="nav-label">Collabs Manager</span>
+            <span className="nav-count-badge">{collabsList.length}</span>
+          </button>
+
+          <button
+            type="button"
+            className={`sidebar-nav-item ${activeTab === 'ads' ? 'active' : ''}`}
+            onClick={() => setActiveTab('ads')}
+            title="Ads & Promos"
+          >
+            <Zap size={20} className="nav-icon" />
+            <span className="nav-label">Ads & Promos</span>
+            <span className="nav-count-badge">{adsList.length}</span>
+          </button>
+
+          <button
+            type="button"
+            className={`sidebar-nav-item ${activeTab === 'proposals' ? 'active' : ''}`}
+            onClick={() => setActiveTab('proposals')}
+            title="Brand Proposals"
+          >
+            <Briefcase size={20} className="nav-icon" />
+            <span className="nav-label">Brand Proposals</span>
+            <span className="nav-count-badge">{totalProposals}</span>
+          </button>
+
+          <button
+            type="button"
+            className={`sidebar-nav-item ${activeTab === 'contacts' ? 'active' : ''}`}
+            onClick={() => setActiveTab('contacts')}
+            title="Contact Messages"
+          >
+            <MessageSquare size={20} className="nav-icon" />
+            <span className="nav-label">Contact Messages</span>
+            <span className="nav-count-badge">{totalContacts}</span>
+          </button>
+        </nav>
+
+        <div className="sidebar-bottom-actions">
+          <a href="/" target="_blank" rel="noreferrer" className="sidebar-action-btn view-site">
+            <ExternalLink size={18} />
+            <span className="action-label">View Live Site</span>
+          </a>
+          <button type="button" className="sidebar-action-btn refresh" onClick={() => fetchData(token)} disabled={loadingData}>
+            <RefreshCw size={18} className={loadingData ? 'spin' : ''} />
+            <span className="action-label">Refresh Data</span>
+          </button>
+          <button type="button" className="sidebar-action-btn logout" onClick={handleLogout}>
+            <LogOut size={18} />
+            <span className="action-label">Logout</span>
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Viewport Content */}
+      <main className="admin-main-viewport">
+        <header className="viewport-top-bar">
+          <div className="top-bar-left">
+            <button
+              type="button"
+              className="mobile-menu-btn"
+              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+            >
+              <Menu size={22} />
+            </button>
+            <span className="active-tab-title">
+              {activeTab === 'blogs' && 'Blogs Manager'}
+              {activeTab === 'media' && 'Videos & Media Manager'}
+              {activeTab === 'collabs' && 'Collabs Manager'}
+              {activeTab === 'ads' && 'Ads & Promos Manager'}
+              {activeTab === 'proposals' && 'Brand Proposals'}
+              {activeTab === 'contacts' && 'Contact Messages'}
+            </span>
             <span className="live-db-pill">MongoDB & Cloudinary Connected</span>
           </div>
 
-          <div className="header-right">
-            <button
-              type="button"
-              className="refresh-btn"
-              onClick={() => fetchData(token)}
-              disabled={loadingData}
-              title="Refresh Data"
-            >
-              <RefreshCw size={16} className={loadingData ? 'spin' : ''} />
-              <span>Refresh</span>
-            </button>
-
+          <div className="top-bar-right">
             <div className="admin-user-tag">
               <Mail size={14} />
               <span>connect.snaha@gmail.com</span>
             </div>
-
-            <button type="button" className="logout-btn" onClick={handleLogout}>
-              <LogOut size={16} />
-              <span>Logout</span>
-            </button>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* Main Dashboard Content */}
-      <main className="dashboard-content">
-        <div className="dashboard-inner">
-          {/* Dashboard Headline & Stats Overview */}
+        <div className="viewport-content-inner">
+          {/* Dashboard Stats Overview */}
           <div className="dashboard-top-section">
-            <div>
-              <h1 className="dashboard-title">Media Manager & Database Panel</h1>
-              <p className="dashboard-subtitle">
-                Upload & Edit YouTube/Instagram video content with Cloudinary media thumbnails & manage live Brand Proposal form responses.
-              </p>
-            </div>
-
-            {/* 4 Overview Stat Cards */}
             <div className="stats-overview-grid">
               <div className="stat-card">
                 <div className="stat-icon-circle orange">
@@ -561,51 +1147,473 @@ export default function AdminPanel() {
             </div>
           </div>
 
-          {/* Navigation Tabs */}
-          <div className="tab-navigation-bar">
-            <div className="tabs-left">
-              <button
-                type="button"
-                className={`tab-btn ${activeTab === 'media' ? 'active' : ''}`}
-                onClick={() => setActiveTab('media')}
-              >
-                <Film size={18} />
-                <span>Videos & Media Manager ({totalMedia})</span>
-              </button>
+          {/* TAB 0: BLOGS MANAGER WITH JODIT RICH TEXT EDITOR */}
+          {activeTab === 'blogs' && (
+            <div className="tab-content-panel">
+              {/* Category Management Card */}
+              <div className="admin-media-form-card" style={{ marginBottom: '24px', padding: '24px' }}>
+                <div className="header-title-flex">
+                  <h3>
+                    <Tag size={18} />
+                    <span>Categories ({categoriesList.length})</span>
+                  </h3>
+                  <button
+                    type="button"
+                    className="cancel-edit-btn"
+                    onClick={() => setShowCatManager((prev) => !prev)}
+                    style={{ background: 'rgba(255, 159, 28, 0.15)', color: '#FF9F1C', border: '1px solid rgba(255, 159, 28, 0.3)' }}
+                  >
+                    {showCatManager ? 'Close Category Panel' : '+ Manage & Create Categories'}
+                  </button>
+                </div>
 
-              <button
-                type="button"
-                className={`tab-btn ${activeTab === 'collabs' ? 'active' : ''}`}
-                onClick={() => setActiveTab('collabs')}
-              >
-                <Sparkles size={18} />
-                <span>Collabs Manager ({collabsList.length})</span>
-              </button>
+                {showCatManager && (
+                  <div className="category-manager-body">
+                    <form onSubmit={handleAddCategory} className="category-add-form">
+                      <div className="category-input-wrap">
+                        <Tag size={16} className="cat-icon" />
+                        <input
+                          type="text"
+                          className="category-dark-input"
+                          placeholder="Enter new category name (e.g. SEO Tips, Creator Secrets)..."
+                          value={newCatInput}
+                          onChange={(e) => setNewCatInput(e.target.value)}
+                        />
+                      </div>
+                      <button type="submit" className="add-category-btn" disabled={addingCategory}>
+                        <PlusCircle size={16} />
+                        <span>{addingCategory ? 'Adding...' : 'Add Category'}</span>
+                      </button>
+                    </form>
 
-              <button
-                type="button"
-                className={`tab-btn ${activeTab === 'proposals' ? 'active' : ''}`}
-                onClick={() => setActiveTab('proposals')}
-              >
-                <Briefcase size={18} />
-                <span>Brand Proposals ({totalProposals})</span>
-              </button>
+                    <div className="category-pills-wrap">
+                      {categoriesList.map((cat) => (
+                        <div key={cat._id || cat.name} className="category-manage-pill">
+                          <span className="pill-dot" />
+                          <span className="pill-name">{cat.name}</span>
+                          <button
+                            type="button"
+                            className="pill-delete-btn"
+                            onClick={() => handleDeleteCategory(cat._id, cat.name)}
+                            title="Delete category"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
 
-              <button
-                type="button"
-                className={`tab-btn ${activeTab === 'contacts' ? 'active' : ''}`}
-                onClick={() => setActiveTab('contacts')}
-              >
-                <MessageSquare size={18} />
-                <span>Contact Messages ({totalContacts})</span>
-              </button>
+              {/* Blog Form Card */}
+              <div className="admin-media-form-card">
+                <div className="header-title-flex">
+                  <h3>
+                    <BookOpen size={20} />
+                    <span>{blogEditingId ? 'Edit Blog Post' : 'Create New Blog Post (Jodit Editor)'}</span>
+                  </h3>
+                  {blogEditingId && (
+                    <button type="button" className="cancel-edit-btn" onClick={resetBlogForm}>
+                      <XCircle size={16} /> Cancel Editing
+                    </button>
+                  )}
+                </div>
+
+                <form onSubmit={handlePublishBlog} className="media-publish-form">
+                  <div className="form-row-2">
+                    <div className="form-group-col">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <label>Blog Title * (Max 80-100 chars / ~12-15 words)</label>
+                        <small style={{ color: blogForm.title.length >= 90 ? '#FF9F1C' : '#78716C', fontWeight: '600', fontSize: '12px' }}>
+                          {blogForm.title ? blogForm.title.length : 0} / 100
+                        </small>
+                      </div>
+                      <input
+                        type="text"
+                        maxLength={100}
+                        placeholder="Ex. 10 Secrets to High-Converting Brand Campaigns (~12-15 words)"
+                        value={blogForm.title}
+                        onChange={(e) => setBlogForm({ ...blogForm, title: e.target.value })}
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group-col">
+                      <label>Category *</label>
+                      <select
+                        value={blogForm.category}
+                        onChange={(e) => {
+                          if (e.target.value === '__add_new__') {
+                            setShowCatManager(true);
+                          } else {
+                            setBlogForm({ ...blogForm, category: e.target.value });
+                          }
+                        }}
+                        required
+                      >
+                        {categoriesList.map((cat) => (
+                          <option key={cat._id || cat.name} value={cat.name}>
+                            {cat.name}
+                          </option>
+                        ))}
+                        <option value="__add_new__">+ Add / Manage Categories...</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="form-row-2">
+                    <div className="form-group-col">
+                      <label>Cover Image / Thumbnail (Recommended: 1200 × 675 px) *</label>
+                      <div className="file-upload-row">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleBlogCoverUpload}
+                          id="blog-cover-input"
+                          style={{ display: 'none' }}
+                        />
+                        <label htmlFor="blog-cover-input" className="upload-trigger-btn">
+                          <Upload size={16} />
+                          <span>{uploadingBlogCover ? 'Uploading...' : 'Choose Image File'}</span>
+                        </label>
+                      </div>
+                      {blogForm.coverImage && (
+                        <div className="image-preview-badge">
+                          <img src={blogForm.coverImage} alt="Cover Preview" className="preview-thumb-img" />
+                          <span>✓ Cover Image Ready</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="form-group-col">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <label>Summary / Excerpt (Max 150-160 chars / ~25-30 words)</label>
+                        <small style={{ color: blogForm.summary.length >= 150 ? '#FF9F1C' : '#78716C', fontWeight: '600', fontSize: '12px' }}>
+                          {blogForm.summary ? blogForm.summary.length : 0} / 160
+                        </small>
+                      </div>
+                      <input
+                        type="text"
+                        maxLength={160}
+                        placeholder="Short summary preview for blog cards (~25-30 words)..."
+                        value={blogForm.summary}
+                        onChange={(e) => setBlogForm({ ...blogForm, summary: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Jodit Rich Text Editor */}
+                  <div className="form-group-col full-width-group" style={{ marginBottom: '24px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <label style={{ fontWeight: '700', color: '#E7E5E4', margin: 0 }}>
+                        Rich Article Content (Jodit Editor) *
+                      </label>
+                      <div className="inline-image-upload-wrap">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleInlineImageUpload}
+                          id="inline-img-input"
+                          style={{ display: 'none' }}
+                        />
+                        <label
+                          htmlFor="inline-img-input"
+                          className="cancel-edit-btn"
+                          style={{
+                            background: 'rgba(255, 159, 28, 0.15)',
+                            color: '#FF9F1C',
+                            border: '1px solid rgba(255, 159, 28, 0.3)',
+                            cursor: 'pointer',
+                            padding: '6px 14px',
+                          }}
+                        >
+                          <ImageIcon size={14} />
+                          <span>{uploadingInlineImage ? 'Uploading Image...' : '+ Add Image from Device'}</span>
+                        </label>
+                      </div>
+                    </div>
+                    <div className="jodit-editor-wrapper">
+                      <JoditEditor
+                        ref={blogEditorRef}
+                        value={blogForm.content}
+                        config={joditConfig}
+                        onBlur={(newContent) => setBlogForm((prev) => ({ ...prev, content: newContent }))}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-row-2">
+                    <div className="form-group-col">
+                      <label>Author</label>
+                      <input
+                        type="text"
+                        value={blogForm.author}
+                        onChange={(e) => setBlogForm({ ...blogForm, author: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="form-group-col">
+                      <label>Estimated Read Time</label>
+                      <input
+                        type="text"
+                        placeholder="Ex. 5 min read"
+                        value={blogForm.readTime}
+                        onChange={(e) => setBlogForm({ ...blogForm, readTime: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-actions-row">
+                    <button type="submit" className="publish-submit-btn" disabled={publishingBlog}>
+                      <Save size={16} />
+                      <span>{publishingBlog ? 'Saving...' : blogEditingId ? 'Update Blog Post' : 'Publish Blog Post'}</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Published Blogs Table */}
+              <div className="admin-table-card" style={{ marginTop: '30px' }}>
+                <div className="card-header-bar">
+                  <h2>Published Blog Posts ({blogsList.length})</h2>
+                </div>
+
+                <div className="table-wrapper">
+                  <table className="admin-data-table">
+                    <thead>
+                      <tr>
+                        <th>Cover</th>
+                        <th>Title & Category</th>
+                        <th>Author & Date</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {blogsList.length === 0 ? (
+                        <tr>
+                          <td colSpan="4" className="empty-table-cell">
+                            No blog posts published yet. Use the editor above to publish your first blog post.
+                          </td>
+                        </tr>
+                      ) : (
+                        blogsList.map((blog) => (
+                          <tr key={blog._id}>
+                            <td>
+                              <img src={blog.coverImage} alt={blog.title} className="table-thumb-img" />
+                            </td>
+                            <td>
+                              <strong>{blog.title}</strong>
+                              <br />
+                              <span className="category-tag-pill">{blog.category}</span>
+                            </td>
+                            <td>
+                              <span>{blog.author || 'Snaha'}</span>
+                              <br />
+                              <small style={{ color: '#78716C' }}>{blog.date}</small>
+                            </td>
+                            <td>
+                              <div className="action-buttons-cell">
+                                <button
+                                  type="button"
+                                  className="icon-action-btn edit"
+                                  onClick={() => handleEditBlog(blog)}
+                                  title="Edit Blog"
+                                >
+                                  <Edit3 size={15} />
+                                </button>
+                                <button
+                                  type="button"
+                                  className="icon-action-btn delete"
+                                  onClick={() => handleDeleteBlog(blog._id)}
+                                  title="Delete Blog"
+                                >
+                                  <Trash2 size={15} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
+          )}
 
-            <a href="/" className="view-live-site-link" target="_blank" rel="noreferrer">
-              <span>View Live Website</span>
-              <ExternalLink size={14} />
-            </a>
-          </div>
+          {/* TAB: ADS & PROMOS MANAGER */}
+          {activeTab === 'ads' && (
+            <div className="tab-content-area">
+              <div className="admin-media-form-card">
+                <div className="card-header-bar">
+                  <div className="header-title-group">
+                    <Zap size={20} className="header-icon" />
+                    <h2>{adEditingId ? 'Edit Advertisement Card' : 'Create New Advertisement Card'}</h2>
+                  </div>
+                  {adEditingId && (
+                    <button type="button" className="cancel-edit-btn" onClick={resetAdForm}>
+                      <XCircle size={14} />
+                      <span>Cancel Edit</span>
+                    </button>
+                  )}
+                </div>
+
+                <form onSubmit={handlePublishAd} className="media-publish-form">
+                  <div className="form-row-2">
+                    <div className="form-group-col">
+                      <label>Ad Title *</label>
+                      <input
+                        type="text"
+                        placeholder="Ex. YamKitch Brand Partnership or Book Launch Promo"
+                        value={adForm.title}
+                        onChange={(e) => setAdForm({ ...adForm, title: e.target.value })}
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group-col">
+                      <label>Badge Text (e.g. Sponsored, Book Promo, Featured)</label>
+                      <input
+                        type="text"
+                        placeholder="Ex. Sponsored, Featured Partner, Pre-Order"
+                        value={adForm.badgeText}
+                        onChange={(e) => setAdForm({ ...adForm, badgeText: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-row-2">
+                    <div className="form-group-col">
+                      <label>Banner Image / Thumbnail (Recommended: 600 × 340 px | Max 10MB) *</label>
+                      <div className="file-upload-row">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleAdImageUpload}
+                          id="ad-banner-input"
+                          style={{ display: 'none' }}
+                        />
+                        <label htmlFor="ad-banner-input" className="upload-trigger-btn">
+                          <Upload size={16} />
+                          <span>{uploadingAdImage ? 'Uploading...' : 'Choose Banner File'}</span>
+                        </label>
+                      </div>
+                      {adForm.imageUrl && (
+                        <div className="image-preview-badge">
+                          <img src={adForm.imageUrl} alt="Banner Preview" className="preview-thumb-img" />
+                          <span>✓ Banner Ready</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="form-group-col">
+                      <label>Target CTA Link / URL (e.g. #contact or https://...)</label>
+                      <input
+                        type="text"
+                        placeholder="Ex. #contact or https://brandpartner.com"
+                        value={adForm.link}
+                        onChange={(e) => setAdForm({ ...adForm, link: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group-col full-width-group">
+                    <label>Subheading / Tagline</label>
+                    <textarea
+                      rows={3}
+                      placeholder="Short engaging description for sidebar ad card..."
+                      value={adForm.tagline}
+                      onChange={(e) => setAdForm({ ...adForm, tagline: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="form-submit-row-bar">
+                    <button type="submit" className="publish-submit-btn" disabled={publishingAd || uploadingAdImage}>
+                      <Save size={18} />
+                      <span>{publishingAd ? 'Saving Ad Card...' : adEditingId ? 'Update Ad Card' : 'Publish Ad Card'}</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Published Ads Table */}
+              <div className="admin-table-card" style={{ marginTop: '32px' }}>
+                <div className="card-header-bar">
+                  <div className="header-title-group">
+                    <Zap size={20} className="header-icon" />
+                    <h2>Active Advertisements Sidebar Cards ({adsList.length})</h2>
+                  </div>
+                </div>
+
+                <div className="table-wrapper">
+                  <table className="admin-data-table">
+                    <thead>
+                      <tr>
+                        <th>Banner</th>
+                        <th>Title & Tagline</th>
+                        <th>Badge & Link</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {adsList.length === 0 ? (
+                        <tr>
+                          <td colSpan={5} className="empty-table-cell">
+                            No advertisement cards published yet. Use the form above to add your first Ad.
+                          </td>
+                        </tr>
+                      ) : (
+                        adsList.map((ad) => (
+                          <tr key={ad._id}>
+                            <td>
+                              <img src={ad.imageUrl} alt={ad.title} className="table-thumb-img" />
+                            </td>
+                            <td>
+                              <strong>{ad.title}</strong>
+                              <br />
+                              <small style={{ color: '#78716C' }}>{ad.tagline}</small>
+                            </td>
+                            <td>
+                              <span className="category-tag-pill">{ad.badgeText}</span>
+                              <br />
+                              <small style={{ color: '#FF9F1C' }}>{ad.link}</small>
+                            </td>
+                            <td>
+                              <span className={`status-pill ${ad.active ? 'published' : 'draft'}`}>
+                                {ad.active ? 'Active' : 'Inactive'}
+                              </span>
+                            </td>
+                            <td>
+                              <div className="action-buttons-cell">
+                                <button
+                                  type="button"
+                                  className="icon-action-btn edit"
+                                  onClick={() => handleEditAd(ad)}
+                                  title="Edit Ad"
+                                >
+                                  <Edit3 size={15} />
+                                </button>
+                                <button
+                                  type="button"
+                                  className="icon-action-btn delete"
+                                  onClick={() => handleDeleteAd(ad._id)}
+                                  title="Delete Ad"
+                                >
+                                  <Trash2 size={15} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* TAB 1: MEDIA & VIDEOS MANAGER (CLOUDINARY) */}
           {activeTab === 'media' && (

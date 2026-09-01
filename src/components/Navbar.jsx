@@ -24,6 +24,7 @@ export default function Navbar({ isDarkMode, toggleDarkMode, activePage }) {
   const navItems = [
     { name: 'Home', path: '/' },
     { name: 'Collabs', path: '/collabs' },
+    { name: 'Blogs', path: '/blogs' },
     { name: 'Shorts Series', path: '/#series' },
     { name: 'Promotions', path: '/#book-promo' },
     { name: 'About Me', path: '/#about' },
@@ -31,7 +32,7 @@ export default function Navbar({ isDarkMode, toggleDarkMode, activePage }) {
 
   const currentTab =
     activePage ||
-    (location.pathname === '/collabs' ? 'Collabs' : 'Home');
+    (location.pathname === '/collabs' ? 'Collabs' : location.pathname === '/blogs' ? 'Blogs' : 'Home');
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
