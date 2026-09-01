@@ -863,6 +863,11 @@
     font-size: 21px;
   }
 
+  .navbar-logo-img {
+    height: 32px;
+    max-width: 120px;
+  }
+
   .navbar-actions {
     gap: 8px;
   }

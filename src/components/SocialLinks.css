@@ -35,3 +35,10 @@
   transform: translateY(-3px) scale(1.05);
   box-shadow: 0 6px 15px rgba(255, 159, 28, 0.35);
 }
+
+@media (max-width: 1024px) {
+  .social-links-container {
+    align-items: center;
+    text-align: center;
+  }
+}
