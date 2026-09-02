@@ -4,6 +4,7 @@ import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
 import CollabsPage from './pages/Collabs/CollabsPage';
 import BlogsPage from './pages/Blogs/BlogsPage';
+import BlogArchivePage from './pages/Blogs/BlogArchivePage';
 import AdminPanel from './pages/AdminPanel';
 
 function App() {
@@ -14,6 +15,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/collabs" element={<CollabsPage />} />
         <Route path="/blogs" element={<BlogsPage />} />
+        <Route path="/archive" element={<BlogArchivePage />} />
+        <Route path="/blogs/archive" element={<BlogArchivePage />} />
         <Route path="/admin" element={<AdminPanel />} />
         <Route path="/admin/login" element={<AdminPanel />} />
       </Routes>

@@ -1,3 +1,5 @@
+/* HireBadge.css - Rotating Contact Me Badge */
+
 .hire-badge-container {
   display: flex;
   justify-content: flex-end;
@@ -5,21 +7,40 @@
 }
 
 .hire-badge-wrapper {
-  width: 90px;
-  height: 90px;
+  width: 96px;
+  height: 96px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.6s ease;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
 }
 
 .hire-badge-wrapper:hover {
-  transform: rotate(45deg) scale(1.08);
+  transform: scale(1.12);
 }
 
-.hire-badge-img {
+.contact-badge-svg {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  overflow: visible;
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.25));
+}
+
+.rotating-text-group {
+  transform-origin: 100px 100px;
+  animation: spinBadgeText 12s linear infinite;
+}
+
+.hire-badge-wrapper:hover .rotating-text-group {
+  animation-duration: 6s;
+}
+
+@keyframes spinBadgeText {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Search, Sparkles, Clock, Calendar, User, ArrowRight, X, Play, ChevronRight, BookOpen, Video, ArrowUpRight } from 'lucide-react';
 import Navbar from '../../components/Navbar';
 import ContactSection from '../../components/ContactSection';
@@ -14,6 +14,7 @@ import lekhokTripuraImg from '../../assets/lekhok-tripura-mockup.jpg';
 import './BlogsPage.css';
 
 export default function BlogsPage() {
+  const navigate = useNavigate();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [activeCategory, setActiveCategory] = useState('The Latest');
   const [searchQuery, setSearchQuery] = useState('');
@@ -322,7 +323,12 @@ export default function BlogsPage() {
             ========================================================================== */}
         <section className="magazine-section latest-grid-section">
           <div className="section-header-bar">
-            <h2 className="magazine-section-title">
+            <h2
+              className="magazine-section-title"
+              onClick={() => navigate('/archive')}
+              style={{ cursor: 'pointer' }}
+              title="Click to view all articles in Archive"
+            >
               The Latest
               <span className="title-arrow-circle">
                 <ChevronRight size={18} />
@@ -487,7 +493,7 @@ export default function BlogsPage() {
                     </div>
 
                     {/* All Videos Pill Button */}
-                    <button type="button" className="all-videos-pill-btn">
+                    <button type="button" className="all-videos-pill-btn" onClick={() => navigate('/archive')}>
                       <span>All Videos</span>
                       <ChevronRight size={16} />
                     </button>
