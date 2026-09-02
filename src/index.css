@@ -22,14 +22,14 @@ body {
   width: 100%;
   margin: 0;
   padding: 0;
-  overflow: visible;
+  overflow-x: hidden;
 }
 
 #root {
   width: 100%;
   margin: 0;
   padding: 0;
-  overflow: visible;
+  overflow-x: hidden;
 }
 
 button {
