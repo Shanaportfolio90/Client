@@ -276,7 +276,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 
 .title-logo-circle {
@@ -425,7 +425,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 
 .dark-mode .project-headline {
@@ -740,8 +740,10 @@
 /* Responsive Media Queries */
 
 @media (max-width: 1024px) {
-  .showcase-project-card {
+  .showcase-project-card,
+  .showcase-project-card.layout-reverse {
     grid-template-columns: 1fr;
+    gap: 28px;
   }
 
   .brand-projects-grid {
@@ -750,29 +752,121 @@
 }
 
 @media (max-width: 768px) {
+  .collabs-hero-header {
+    padding: 100px 16px 24px;
+  }
+
   .collabs-main-title {
-    font-size: 36px;
+    font-size: 32px;
+  }
+
+  .collabs-main-content {
+    gap: 40px;
+    padding: 40px 0;
+  }
+
+  .featured-brand-showcase,
+  .all-collabs-portfolio-section {
+    padding: 0 12px;
+    box-sizing: border-box;
   }
 
   .showcase-inner {
-    padding: 24px;
+    padding: 20px 14px;
+    border-radius: 20px;
+    gap: 24px;
+    box-sizing: border-box;
+  }
+
+  .showcase-project-card,
+  .showcase-project-card.layout-reverse {
+    padding: 16px 12px;
+    border-radius: 16px;
+    gap: 20px;
+    box-sizing: border-box;
+  }
+
+  .showcase-mockup-img {
+    height: 220px;
   }
 
   .brand-showcase-title {
-    font-size: 24px;
+    font-size: 22px;
+    line-height: 1.35;
+  }
+
+  .project-headline {
+    font-size: 19px;
+    line-height: 1.35;
+  }
+
+  .dot-divider {
+    display: none;
+  }
+
+  .visit-live-site-btn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
+    padding: 10px 14px;
+    font-size: 13px;
+    max-width: 100%;
   }
 
   .brand-action-cta-box {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    padding: 14px 12px;
+    border-radius: 16px;
+    gap: 12px;
+    box-sizing: border-box;
   }
 
   .brand-action-btn {
     width: 100%;
     justify-content: center;
+    text-align: center;
+    white-space: normal;
+    padding: 10px 16px;
+    box-sizing: border-box;
   }
 
   .brand-projects-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .featured-brand-showcase,
+  .all-collabs-portfolio-section {
+    padding: 0 8px;
+  }
+
+  .showcase-inner {
+    padding: 16px 10px;
+    border-radius: 16px;
+  }
+
+  .showcase-project-card {
+    padding: 12px 10px;
+    border-radius: 14px;
+  }
+
+  .brand-showcase-title {
+    font-size: 19px;
+  }
+
+  .project-headline {
+    font-size: 17px;
+  }
+
+  .showcase-mockup-img {
+    height: 180px;
+  }
+
+  .brand-logo-pill {
+    padding: 6px 14px 6px 10px;
+    font-size: 12px;
   }
 }
