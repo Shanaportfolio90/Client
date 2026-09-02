@@ -34,7 +34,10 @@ import {
   BookOpen,
   Menu,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Star,
+  Pin,
+  FileText
 } from 'lucide-react';
 import './AdminPanel.css';
 import { API_BASE_URL } from '../config';
@@ -169,6 +172,8 @@ export default function AdminPanel() {
     author: 'Snaha Chakraborty',
     date: new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }),
     readTime: '5 min read',
+    heroPosition: 'normal',
+    videoUrl: '',
   });
 
   // Media Form & Edit State
@@ -386,6 +391,146 @@ export default function AdminPanel() {
     setStatusState({ message: '', type: 'info' });
   };
 
+  const [videoUploadProgress, setVideoUploadProgress] = useState({
+    uploading: false,
+    target: null,
+    loadedMB: '0.0',
+    totalMB: '0.0',
+    percent: 0,
+  });
+
+  const handleMediaVideoFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 100 * 1024 * 1024) {
+      alert('Video file size exceeds Cloudinary limit of 100MB. Please select a video < 100MB or paste a YouTube/Instagram link.');
+      return;
+    }
+
+    const fileMB = (file.size / (1024 * 1024)).toFixed(1);
+    setVideoUploadProgress({
+      uploading: true,
+      target: 'media',
+      loadedMB: '0.0',
+      totalMB: fileMB,
+      percent: 0,
+    });
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `${API_BASE_URL}/api/admin/upload-video`, true);
+    xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const loadedMB = (event.loaded / (1024 * 1024)).toFixed(1);
+        const totalMB = (event.total / (1024 * 1024)).toFixed(1);
+        const percent = Math.min(99, Math.round((event.loaded / event.total) * 100));
+        setVideoUploadProgress({
+          uploading: true,
+          target: 'media',
+          loadedMB,
+          totalMB,
+          percent,
+        });
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          const data = JSON.parse(xhr.responseText);
+          if (data.url) {
+            setMediaForm((prev) => ({ ...prev, videoUrl: data.url }));
+            setStatusState({
+              message: `✓ Video (${fileMB} MB) uploaded successfully to Cloudinary!`,
+              type: 'success',
+            });
+          }
+        } catch (err) {
+          console.error('Parse error:', err);
+        }
+      } else {
+        alert('Video upload failed. Status: ' + xhr.status);
+      }
+      setVideoUploadProgress({ uploading: false, target: null, loadedMB: '0.0', totalMB: '0.0', percent: 0 });
+    };
+
+    xhr.onerror = () => {
+      alert('Network error during video upload');
+      setVideoUploadProgress({ uploading: false, target: null, loadedMB: '0.0', totalMB: '0.0', percent: 0 });
+    };
+
+    xhr.send(formData);
+  };
+
+  const handleBlogVideoFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 100 * 1024 * 1024) {
+      alert('Video file size exceeds Cloudinary limit of 100MB. Please select a video < 100MB or paste a YouTube link.');
+      return;
+    }
+
+    const fileMB = (file.size / (1024 * 1024)).toFixed(1);
+    setVideoUploadProgress({
+      uploading: true,
+      target: 'blog',
+      loadedMB: '0.0',
+      totalMB: fileMB,
+      percent: 0,
+    });
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `${API_BASE_URL}/api/admin/upload-video`, true);
+    xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const loadedMB = (event.loaded / (1024 * 1024)).toFixed(1);
+        const totalMB = (event.total / (1024 * 1024)).toFixed(1);
+        const percent = Math.min(99, Math.round((event.loaded / event.total) * 100));
+        setVideoUploadProgress({
+          uploading: true,
+          target: 'blog',
+          loadedMB,
+          totalMB,
+          percent,
+        });
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          const data = JSON.parse(xhr.responseText);
+          if (data.url) {
+            setBlogForm((prev) => ({ ...prev, videoUrl: data.url }));
+          }
+        } catch (err) {
+          console.error('Parse error:', err);
+        }
+      } else {
+        alert('Video upload failed. Status: ' + xhr.status);
+      }
+      setVideoUploadProgress({ uploading: false, target: null, loadedMB: '0.0', totalMB: '0.0', percent: 0 });
+    };
+
+    xhr.onerror = () => {
+      alert('Network error during video upload');
+      setVideoUploadProgress({ uploading: false, target: null, loadedMB: '0.0', totalMB: '0.0', percent: 0 });
+    };
+
+    xhr.send(formData);
+  };
+
   // Blog Handlers
   const handleBlogCoverUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -519,6 +664,8 @@ export default function AdminPanel() {
       author: blog.author || 'Snaha Chakraborty',
       date: blog.date || new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }),
       readTime: blog.readTime || '5 min read',
+      heroPosition: blog.heroPosition || 'normal',
+      videoUrl: blog.videoUrl || '',
     });
     window.scrollTo({ top: 300, behavior: 'smooth' });
   };
@@ -549,6 +696,8 @@ export default function AdminPanel() {
       author: 'Snaha Chakraborty',
       date: new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }),
       readTime: '5 min read',
+      heroPosition: 'normal',
+      videoUrl: '',
     });
   };
 
@@ -1221,6 +1370,7 @@ export default function AdminPanel() {
                 </div>
 
                 <form onSubmit={handlePublishBlog} className="media-publish-form">
+                  {/* Row 1: Title & Category */}
                   <div className="form-row-2">
                     <div className="form-group-col">
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -1262,9 +1412,18 @@ export default function AdminPanel() {
                     </div>
                   </div>
 
+                  {/* Row 2: Cover Image & Summary */}
                   <div className="form-row-2">
                     <div className="form-group-col">
-                      <label>Cover Image / Thumbnail (Recommended: 1200 × 675 px) *</label>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <label>Cover Image / Thumbnail *</label>
+                        <small style={{ color: '#FF9F1C', fontWeight: '700', fontSize: '12px' }}>
+                          {blogForm.heroPosition === 'main_hero' && 'Rec: 1920 × 1080 px (16:9 Widescreen)'}
+                          {(blogForm.heroPosition === 'mini_1' || blogForm.heroPosition === 'mini_2' || blogForm.heroPosition === 'mini_3') && 'Rec: 400 × 400 px (1:1 Square)'}
+                          {blogForm.heroPosition === 'spotlight' && 'Rec: 1920 × 800 px (21:9 Widescreen)'}
+                          {(!blogForm.heroPosition || blogForm.heroPosition === 'normal') && 'Rec: 1200 × 675 px (16:9 Aspect Ratio)'}
+                        </small>
+                      </div>
                       <div className="file-upload-row">
                         <input
                           type="file"
@@ -1303,7 +1462,7 @@ export default function AdminPanel() {
                     </div>
                   </div>
 
-                  {/* Jodit Rich Text Editor */}
+                  {/* Row 3: Jodit Rich Text Editor */}
                   <div className="form-group-col full-width-group" style={{ marginBottom: '24px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                       <label style={{ fontWeight: '700', color: '#E7E5E4', margin: 0 }}>
@@ -1323,7 +1482,7 @@ export default function AdminPanel() {
                           style={{
                             background: 'rgba(255, 159, 28, 0.15)',
                             color: '#FF9F1C',
-                            border: '1px solid rgba(255, 159, 28, 0.3)',
+                            border: '1.5px solid rgba(255, 159, 28, 0.3)',
                             cursor: 'pointer',
                             padding: '6px 14px',
                           }}
@@ -1343,6 +1502,7 @@ export default function AdminPanel() {
                     </div>
                   </div>
 
+                  {/* Row 4: Author & Read Time */}
                   <div className="form-row-2">
                     <div className="form-group-col">
                       <label>Author</label>
@@ -1361,6 +1521,105 @@ export default function AdminPanel() {
                         value={blogForm.readTime}
                         onChange={(e) => setBlogForm({ ...blogForm, readTime: e.target.value })}
                       />
+                    </div>
+                  </div>
+
+                  <div className="form-group-col full-width-group" style={{ marginBottom: '20px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <label style={{ color: '#60A5FA', fontWeight: '700', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
+                        <PlayCircle size={16} />
+                        <span>Video Essay Source (Upload MP4 &lt;100MB or Paste Link)</span>
+                      </label>
+                      <small style={{ color: '#FF9F1C', fontWeight: '700' }}>Cloudinary MP4 or YouTube Link</small>
+                    </div>
+
+                    {videoUploadProgress.uploading && videoUploadProgress.target === 'blog' && (
+                      <div style={{ background: 'rgba(255, 159, 28, 0.12)', border: '1.5px solid rgba(255, 159, 28, 0.4)', borderRadius: '14px', padding: '12px 16px', marginBottom: '10px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', fontWeight: '800', color: '#FF9F1C' }}>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <RefreshCw size={14} className="spin" />
+                            <span>Uploading Video File to Cloudinary...</span>
+                          </span>
+                          <span>{videoUploadProgress.loadedMB} MB / {videoUploadProgress.totalMB} MB ({videoUploadProgress.percent}%)</span>
+                        </div>
+                        <div style={{ width: '100%', height: '8px', backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '9999px', overflow: 'hidden' }}>
+                          <div
+                            style={{
+                              width: `${videoUploadProgress.percent}%`,
+                              height: '100%',
+                              backgroundColor: '#FF9F1C',
+                              borderRadius: '9999px',
+                              boxShadow: '0 0 10px rgba(255, 159, 28, 0.8)',
+                              transition: 'width 0.15s ease',
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                      <input
+                        type="text"
+                        placeholder="Ex. Paste YouTube link or upload MP4 video file (<100MB)..."
+                        value={blogForm.videoUrl || ''}
+                        onChange={(e) => setBlogForm({ ...blogForm, videoUrl: e.target.value })}
+                        style={{ flex: 1 }}
+                      />
+                      <input
+                        type="file"
+                        accept="video/mp4,video/quicktime,video/webm"
+                        onChange={handleBlogVideoFileUpload}
+                        id="blog-video-file-input"
+                        style={{ display: 'none' }}
+                      />
+                      <label
+                        htmlFor="blog-video-file-input"
+                        className="upload-trigger-btn"
+                        style={{ whiteSpace: 'nowrap', cursor: 'pointer', padding: '10px 14px' }}
+                      >
+                        <Upload size={14} />
+                        <span>
+                          {videoUploadProgress.uploading && videoUploadProgress.target === 'blog'
+                            ? `Uploading ${videoUploadProgress.percent}% (${videoUploadProgress.loadedMB} / ${videoUploadProgress.totalMB} MB)`
+                            : '+ Video File (<100MB)'}
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Row 5: Magazine Placement Options Grid */}
+                  <div className="form-group-col full-width-group" style={{ marginTop: '16px', marginBottom: '20px' }}>
+                    <label style={{ color: '#FF9F1C', fontWeight: '800', fontSize: '14px', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Sparkles size={16} />
+                      <span>Magazine Layout Placement (Recommended Cover Dimensions)</span>
+                    </label>
+
+                    <div className="placement-cards-grid">
+                      {[
+                        { id: 'normal', label: 'Normal List', desc: 'Standard article grid card', dim: '1200 × 675 px (16:9)', icon: <FileText size={18} /> },
+                        { id: 'main_hero', label: 'Main Hero Banner', desc: 'Top main feature card', dim: '1920 × 1080 px (16:9)', icon: <Star size={18} fill="#FF9F1C" color="#FF9F1C" /> },
+                        { id: 'spotlight', label: 'Spotlight Wide Banner', desc: 'Middle wide banner (Full Section)', dim: '1920 × 1080 px (16:9)', icon: <Sparkles size={18} color="#FF9F1C" /> },
+                        { id: 'mini_1', label: 'Hero Mini #1', desc: 'Top hero bottom-left overlay', dim: '400 × 400 px (1:1)', icon: <Pin size={18} color="#FF9F1C" /> },
+                        { id: 'mini_2', label: 'Hero Mini #2', desc: 'Top hero bottom-center overlay', dim: '400 × 400 px (1:1)', icon: <Pin size={18} color="#FF9F1C" /> },
+                        { id: 'mini_3', label: 'Hero Mini #3', desc: 'Top hero bottom-right overlay', dim: '400 × 400 px (1:1)', icon: <Pin size={18} color="#FF9F1C" /> },
+                      ].map((opt) => {
+                        const isSelected = (blogForm.heroPosition || 'normal') === opt.id;
+                        return (
+                          <div
+                            key={opt.id}
+                            className={`placement-selector-card ${isSelected ? 'selected' : ''}`}
+                            onClick={() => setBlogForm({ ...blogForm, heroPosition: opt.id })}
+                          >
+                            <div className="placement-card-icon">{opt.icon}</div>
+                            <div className="placement-card-text">
+                              <span className="placement-card-label">{opt.label}</span>
+                              <span className="placement-card-desc">{opt.desc}</span>
+                              <span className="placement-card-dim-tag">📏 {opt.dim}</span>
+                            </div>
+                            {isSelected && <span className="placement-check-badge">✓ Selected</span>}
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
 
@@ -1384,7 +1643,7 @@ export default function AdminPanel() {
                     <thead>
                       <tr>
                         <th>Cover</th>
-                        <th>Title & Category</th>
+                        <th>Title, Category & Placement</th>
                         <th>Author & Date</th>
                         <th>Actions</th>
                       </tr>
@@ -1406,6 +1665,51 @@ export default function AdminPanel() {
                               <strong>{blog.title}</strong>
                               <br />
                               <span className="category-tag-pill">{blog.category}</span>
+                              {blog.heroPosition && blog.heroPosition !== 'normal' && (
+                                <span
+                                  className="category-tag-pill"
+                                  style={{
+                                    backgroundColor: '#FF9F1C',
+                                    color: '#191412',
+                                    fontWeight: '800',
+                                    marginLeft: '6px',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                  }}
+                                >
+                                  {blog.heroPosition === 'main_hero' && (
+                                    <>
+                                      <Star size={12} fill="#191412" />
+                                      <span>Main Hero Banner</span>
+                                    </>
+                                  )}
+                                  {blog.heroPosition === 'mini_1' && (
+                                    <>
+                                      <Pin size={12} fill="#191412" />
+                                      <span>Hero Mini #1</span>
+                                    </>
+                                  )}
+                                  {blog.heroPosition === 'mini_2' && (
+                                    <>
+                                      <Pin size={12} fill="#191412" />
+                                      <span>Hero Mini #2</span>
+                                    </>
+                                  )}
+                                  {blog.heroPosition === 'mini_3' && (
+                                    <>
+                                      <Pin size={12} fill="#191412" />
+                                      <span>Hero Mini #3</span>
+                                    </>
+                                  )}
+                                  {blog.heroPosition === 'spotlight' && (
+                                    <>
+                                      <Sparkles size={12} fill="#191412" />
+                                      <span>Spotlight Banner</span>
+                                    </>
+                                  )}
+                                </span>
+                              )}
                             </td>
                             <td>
                               <span>{blog.author || 'Snaha'}</span>
@@ -1698,14 +2002,64 @@ export default function AdminPanel() {
 
                   <div className="form-grid-2">
                     <div className="modal-form-group">
-                      <label>YouTube / Instagram Video Link *</label>
-                      <input
-                        type="url"
-                        placeholder="https://www.youtube.com/watch?v=... or Instagram reel URL"
-                        value={mediaForm.videoUrl}
-                        onChange={(e) => setMediaForm({ ...mediaForm, videoUrl: e.target.value })}
-                        required
-                      />
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                        <label style={{ margin: 0 }}>Video Source (Link or Direct Upload) *</label>
+                        <small style={{ color: '#FF9F1C', fontWeight: '700' }}>Upload MP4 (&lt;100MB) or Paste Link</small>
+                      </div>
+
+                      {videoUploadProgress.uploading && videoUploadProgress.target === 'media' && (
+                        <div style={{ background: 'rgba(255, 159, 28, 0.12)', border: '1.5px solid rgba(255, 159, 28, 0.4)', borderRadius: '14px', padding: '12px 16px', marginBottom: '10px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', fontWeight: '800', color: '#FF9F1C' }}>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <RefreshCw size={14} className="spin" />
+                              <span>Uploading Video File to Cloudinary...</span>
+                            </span>
+                            <span>{videoUploadProgress.loadedMB} MB / {videoUploadProgress.totalMB} MB ({videoUploadProgress.percent}%)</span>
+                          </div>
+                          <div style={{ width: '100%', height: '8px', backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '9999px', overflow: 'hidden' }}>
+                            <div
+                              style={{
+                                width: `${videoUploadProgress.percent}%`,
+                                height: '100%',
+                                backgroundColor: '#FF9F1C',
+                                borderRadius: '9999px',
+                                boxShadow: '0 0 10px rgba(255, 159, 28, 0.8)',
+                                transition: 'width 0.15s ease',
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                        <input
+                          type="text"
+                          placeholder="Paste YouTube / Instagram Reel URL or Cloudinary video link..."
+                          value={mediaForm.videoUrl}
+                          onChange={(e) => setMediaForm({ ...mediaForm, videoUrl: e.target.value })}
+                          required
+                          style={{ flex: 1 }}
+                        />
+                        <input
+                          type="file"
+                          accept="video/mp4,video/quicktime,video/webm"
+                          onChange={handleMediaVideoFileUpload}
+                          id="direct-video-file-input"
+                          style={{ display: 'none' }}
+                        />
+                        <label
+                          htmlFor="direct-video-file-input"
+                          className="upload-trigger-btn"
+                          style={{ whiteSpace: 'nowrap', cursor: 'pointer', padding: '10px 14px' }}
+                        >
+                          <Upload size={14} />
+                          <span>
+                            {videoUploadProgress.uploading && videoUploadProgress.target === 'media'
+                              ? `Uploading ${videoUploadProgress.percent}% (${videoUploadProgress.loadedMB} / ${videoUploadProgress.totalMB} MB)`
+                              : '+ Video File (<100MB)'}
+                          </span>
+                        </label>
+                      </div>
                     </div>
 
                     <div className="modal-form-group">

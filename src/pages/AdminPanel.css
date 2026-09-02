@@ -2070,6 +2070,104 @@
   border-color: #EF4444;
 }
 
+/* Custom Magazine Placement Option Cards Grid */
+.placement-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  width: 100%;
+}
+
+.placement-selector-card {
+  background-color: #12100E;
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.placement-selector-card:hover {
+  border-color: rgba(255, 159, 28, 0.5);
+  background-color: rgba(255, 159, 28, 0.05);
+  transform: translateY(-2px);
+}
+
+.placement-selector-card.selected {
+  border-color: #FF9F1C;
+  background-color: rgba(255, 159, 28, 0.12);
+  box-shadow: 0 4px 20px rgba(255, 159, 28, 0.2);
+}
+
+.placement-card-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #FF9F1C;
+}
+
+.placement-selector-card.selected .placement-card-icon {
+  background-color: #FF9F1C;
+  color: #191412;
+}
+
+.placement-card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex-grow: 1;
+}
+
+.placement-card-label {
+  font-size: 14px;
+  font-weight: 800;
+  color: #FFFFFF;
+}
+
+.placement-selector-card.selected .placement-card-label {
+  color: #FF9F1C;
+}
+
+.placement-card-desc {
+  font-size: 12px;
+  color: #A8A29E;
+  line-height: 1.3;
+}
+
+.placement-card-dim-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #FF9F1C;
+  background-color: rgba(255, 159, 28, 0.12);
+  border: 1px solid rgba(255, 159, 28, 0.25);
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-top: 4px;
+  width: fit-content;
+}
+
+.placement-check-badge {
+  font-size: 11px;
+  font-weight: 800;
+  background-color: #FF9F1C;
+  color: #191412;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
 /* Responsive Queries */
 @media (max-width: 1024px) {
   .stats-overview-grid { grid-template-columns: repeat(2, 1fr); }
@@ -2077,6 +2175,7 @@
   .media-cards-grid { grid-template-columns: repeat(2, 1fr); }
   .upload-options-grid { grid-template-columns: 1fr; gap: 16px; }
   .form-row-2 { grid-template-columns: 1fr; }
+  .placement-cards-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 640px) {
@@ -2085,4 +2184,5 @@
   .media-cards-grid { grid-template-columns: 1fr; }
   .filters-control-bar { flex-direction: column; align-items: stretch; }
   .search-box { width: 100%; }
+  .placement-cards-grid { grid-template-columns: 1fr; }
 }
