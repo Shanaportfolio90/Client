@@ -37,12 +37,11 @@ import {
   ChevronRight,
   Star,
   Pin,
-  FileText
+  FileText,
 } from 'lucide-react';
 import './AdminPanel.css';
 import { API_BASE_URL } from '../config';
 import AdminCollabsManager from '../components/AdminCollabsManager';
-
 
 export default function AdminPanel() {
   const [token, setToken] = useState(localStorage.getItem('snaha_admin_token') || '');
@@ -187,24 +186,8 @@ export default function AdminPanel() {
     date: new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }),
   });
 
-  // Collabs Form & Edit State
-  const [collabEditingId, setCollabEditingId] = useState(null);
-  const [collabForm, setCollabForm] = useState({
-    brandName: '',
-    category: 'Tech & Web',
-    customCategory: '',
-    title: '',
-    description: '',
-    websiteUrl: '',
-    displayUrl: '',
-    imageUrl: '',
-    tags: '',
-  });
-
   const [uploadingImage, setUploadingImage] = useState(false);
-  const [uploadingCollabImage, setUploadingCollabImage] = useState(false);
   const [publishingMedia, setPublishingMedia] = useState(false);
-  const [publishingCollab, setPublishingCollab] = useState(false);
   const [statusState, setStatusState] = useState({ message: '', type: 'info' }); // type: 'info' | 'success' | 'error' | 'edit'
 
   // Fetch Admin Data
@@ -226,28 +209,28 @@ export default function AdminPanel() {
       // Fetch Media List
       const reqMedia = fetch(`${API_BASE_URL}/api/media`);
 
-      // Fetch Collabs List
-      const reqCollabs = fetch(`${API_BASE_URL}/api/collabs`);
-
       // Fetch Blogs List
       const reqBlogs = fetch(`${API_BASE_URL}/api/blogs`);
 
       // Fetch Categories List
       const reqCategories = fetch(`${API_BASE_URL}/api/categories`);
 
+      // Fetch Collabs List
+      const reqCollabs = fetch(`${API_BASE_URL}/api/collabs`);
+
       // Fetch Ads List
       const reqAds = fetch(`${API_BASE_URL}/api/admin/ads`, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
 
-      const [resInquiries, resContacts, resMedia, resCollabs, resBlogs, resCategories, resAds] = await Promise.all([
+      const [resInquiries, resContacts, resMedia, resBlogs, resCategories, resAds, resCollabs] = await Promise.all([
         reqInquiries,
         reqContacts,
         reqMedia,
-        reqCollabs,
         reqBlogs,
         reqCategories,
         reqAds,
+        reqCollabs,
       ]);
 
       if (resInquiries.status === 401 || resContacts.status === 401) {
@@ -258,9 +241,9 @@ export default function AdminPanel() {
       if (resInquiries.ok) setInquiries(await resInquiries.json());
       if (resContacts.ok) setContacts(await resContacts.json());
       if (resMedia.ok) setMediaList(await resMedia.json());
-      if (resCollabs.ok) setCollabsList(await resCollabs.json());
       if (resBlogs.ok) setBlogsList(await resBlogs.json());
       if (resAds.ok) setAdsList(await resAds.json());
+      if (resCollabs && resCollabs.ok) setCollabsList(await resCollabs.json());
       if (resCategories.ok) {
         const catsData = await resCategories.json();
         if (Array.isArray(catsData) && catsData.length > 0) {
@@ -1163,7 +1146,7 @@ export default function AdminPanel() {
             type="button"
             className={`sidebar-nav-item ${activeTab === 'collabs' ? 'active' : ''}`}
             onClick={() => setActiveTab('collabs')}
-            title="Collabs Manager"
+            title="Brand Collaborations Manager"
           >
             <Sparkles size={20} className="nav-icon" />
             <span className="nav-label">Collabs Manager</span>
@@ -1234,7 +1217,7 @@ export default function AdminPanel() {
             <span className="active-tab-title">
               {activeTab === 'blogs' && 'Blogs Manager'}
               {activeTab === 'media' && 'Videos & Media Manager'}
-              {activeTab === 'collabs' && 'Collabs Manager'}
+              {activeTab === 'collabs' && 'Brand Collaborations Manager'}
               {activeTab === 'ads' && 'Ads & Promos Manager'}
               {activeTab === 'proposals' && 'Brand Proposals'}
               {activeTab === 'contacts' && 'Contact Messages'}
@@ -1991,6 +1974,13 @@ export default function AdminPanel() {
                         className="select-category-input"
                         required
                       >
+                        <option value="Reels">Reels</option>
+                        <option value="Fashion">Fashion</option>
+                        <option value="Beauty">Beauty</option>
+                        <option value="Lifestyle">Lifestyle</option>
+                        <option value="Food">Food</option>
+                        <option value="UGC">UGC</option>
+                        <option value="Comedy">Comedy</option>
                         <option value="Brand Collab">Brand Collab</option>
                         <option value="Book Promotion">Book Promotion</option>
                         <option value="Shorts Series">Shorts Series</option>
@@ -2251,7 +2241,7 @@ export default function AdminPanel() {
             </div>
           )}
 
-          {/* TAB 2: COLLABS & BRAND CARDS MANAGER */}
+          {/* TAB: BRAND COLLABORATIONS MANAGER */}
           {activeTab === 'collabs' && (
             <AdminCollabsManager
               token={token}

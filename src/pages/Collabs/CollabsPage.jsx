@@ -1,151 +1,66 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, ExternalLink, Globe, BookOpen, Sparkles, CheckCircle } from 'lucide-react';
+import {
+  Sparkles,
+  Award,
+  Handshake,
+  Users,
+  PlayCircle,
+  Rocket,
+  TrendingUp,
+  Heart,
+  ShieldCheck,
+  Plus,
+  ArrowRight,
+} from 'lucide-react';
 import Navbar from '../../components/Navbar';
 import ContactSection from '../../components/ContactSection';
 import PricingSection from '../../components/PricingSection';
 import FooterSection from '../../components/FooterSection';
 import ScrollReveal from '../../components/ScrollReveal';
 import { API_BASE_URL } from '../../config';
-import yamkitchImg from '../../assets/yamkitch-mockup.jpg';
-import lekhokTripuraImg from '../../assets/lekhok-tripura-mockup.jpg';
-import yamkitchLogo from '../../assets/yamkitch-logo.png';
-import genwebOfficialLogo from '../../assets/genweb-official-logo.png';
-import lekhokTripuraLogo from '../../assets/lekhok-tripura-logo.png';
-import p1Img from '../../assets/project-1-mockup.png';
-import p2Img from '../../assets/project-2-mockup.png';
-import b1Img from '../../assets/blog-1.png';
-import b2Img from '../../assets/blog-2.png';
-import b3Img from '../../assets/blog-3.png';
+import { COLLAB_BRANDS } from './BrandLogos';
 import './CollabsPage.css';
 
 export default function CollabsPage() {
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [activeFilter, setActiveFilter] = useState('All');
-  const [dbCards, setDbCards] = useState([]);
+  const [dbCollabs, setDbCollabs] = useState([]);
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/collabs`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
-          setDbCards(data);
+          setDbCollabs(data);
         }
       })
-      .catch((err) => console.error('Failed to load collab cards from DB:', err));
+      .catch((err) => console.error('Failed to load collab cards:', err));
   }, []);
 
   const toggleDarkMode = () => {
     setIsDarkMode((prev) => !prev);
   };
 
-  const marqueeBrands = [
-    'GenWeb Tech',
-    'Lekhok Tripura Publishers',
-    'YamKitch',
-    'Brand Collaborations',
-    'Book Promotions',
-    'Shorts & Reels Series',
-    'Digital Web Solutions',
-  ];
-
-  const brandProjects = [
-    {
-      id: 'yamkitch',
-      brand: 'GenWeb Tech',
-      category: 'Tech & Web',
-      title: 'YamKitch - Modern Food Tech & Digital Web Solution',
-      websiteUrl: 'https://www.yamkitch.in/',
-      displayUrl: 'yamkitch.in',
-      image: yamkitchImg,
-      description:
-        'Designed and engineered a high-converting, responsive web solution for YamKitch under GenWeb Tech. Features modern UI/UX design, custom visual branding, lightning-fast performance, and seamless user interaction.',
-      tags: ['UI/UX Design', 'Web Development', 'Responsive Design', 'GenWeb Tech'],
-      ctaText: 'Get a Professional Website',
-    },
-    {
-      id: 'lekhok-tripura',
-      brand: 'Lekhok Tripura Publishers',
-      category: 'Book Publishers',
-      title: 'Lekhok Tripura - Bestseller Publications & Video Marketing',
-      websiteUrl: 'https://www.lekhoktripura.in/',
-      displayUrl: 'lekhoktripura.in',
-      image: lekhokTripuraImg,
-      description:
-        'End-to-end book launch campaign & promotional video series for Lekhok Tripura Publishers. Created bestseller book trailers, author spotlights, and multi-platform promotional reels that boosted novel sales and reader engagement.',
-      tags: ['Book Promotion', 'Video Marketing', 'Author Branding', 'Publisher Campaign'],
-      ctaText: 'Publish Your Book Now',
-    },
-    {
-      id: 'brand-collab-1',
-      brand: 'Brand Collab',
-      category: 'Shorts & Reels',
-      title: 'High-Converting Viral Brand Campaign',
-      websiteUrl: '#',
-      displayUrl: 'Instagram Reel Campaign',
-      image: b1Img,
-      description:
-        'Viral promo series crafted for top consumer brand. Generated 250,000+ views across Instagram Reels & YouTube Shorts with direct click-through to client platform.',
-      tags: ['Brand Collab', 'Viral Reels', 'Influencer Campaign'],
-    },
-    {
-      id: 'book-promo-2',
-      brand: 'Lekhok Tripura Publishers',
-      category: 'Book Publishers',
-      title: 'Bestseller Fiction Novel Promotion Series',
-      websiteUrl: 'https://www.lekhoktripura.in/',
-      displayUrl: 'lekhoktripura.in',
-      image: b2Img,
-      description:
-        'Short-video promo series highlighting key plot hooks and author backstory. Drove novel pre-orders and bookstore distribution reach.',
-      tags: ['Book Promo', 'Publisher Reel', 'Shorts Series'],
-    },
-    {
-      id: 'app-solution-1',
-      brand: 'GenWeb Tech',
-      category: 'Tech & Web',
-      title: 'Bakery Shop Mobile App Solution UI/UX',
-      websiteUrl: '#',
-      displayUrl: 'GenWeb Mobile UX',
-      image: p1Img,
-      description:
-        'Mobile ordering application concept for artisanal bakery chain. Clean wireframes, design system tokens, and interactive prototype.',
-      tags: ['App Design', 'Wireframe', 'UI/UX Design'],
-    },
-    {
-      id: 'ecommerce-1',
-      brand: 'GenWeb Tech',
-      category: 'Tech & Web',
-      title: 'Clothing Store E-Commerce Platform',
-      websiteUrl: '#',
-      displayUrl: 'Fashion E-Commerce',
-      image: p2Img,
-      description:
-        'Full responsive fashion store web interface with smooth product discovery, filter system, and streamlined checkout experience.',
-      tags: ['Web Design', 'E-Commerce', 'UI System'],
-    },
-  ];
-
-  const formattedDbCards = dbCards.map((c) => ({
+  const formattedDbCollabs = dbCollabs.map((c) => ({
     id: c._id,
-    brand: c.brandName,
+    name: c.brandName,
     category: c.category,
-    title: c.title,
+    logo: c.imageUrl,
+    details: c.title,
     websiteUrl: c.websiteUrl,
-    displayUrl: c.displayUrl || (c.websiteUrl && c.websiteUrl !== '#' ? c.websiteUrl.replace(/^https?:\/\//, '') : ''),
-    image: c.imageUrl,
-    description: c.description,
-    tags: c.tags || [],
   }));
 
-  const allProjects = [...formattedDbCards, ...brandProjects];
+  const allBrandCollabs = [...COLLAB_BRANDS, ...formattedDbCollabs];
 
-  const categoriesList = ['All', ...new Set(allProjects.map((item) => item.category))];
-
-  const filteredProjects = allProjects.filter((item) => {
-    if (activeFilter === 'All') return true;
-    return item.category === activeFilter;
-  });
+  const marqueeBrands = [
+    ...new Set([
+      ...allBrandCollabs.map((b) => b.name),
+      'Brand Collaborations',
+      'Shorts & Reels Series',
+      'Book Promotions',
+      'Influencer Campaigns',
+    ]),
+  ];
 
   return (
     <div className={`collabs-page-wrapper ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
@@ -166,12 +81,21 @@ export default function CollabsPage() {
             <span className="badge-label">Brand Partnerships</span>
           </div>
 
-          <h1 className="collabs-main-title">
-            Brand <span className="highlight-text">Collaborations</span> & Showcase
-          </h1>
+          <div className="collabs-title-wrap">
+            <h1 className="collabs-main-title">
+              Brand <span className="highlight-text">Collaborations</span>
+            </h1>
+            <div className="title-sparkle-stars">
+              <Sparkles size={26} className="title-sparkle" />
+            </div>
+          </div>
+
+          <div className="title-heart-divider">
+            <Heart size={16} className="heart-icon" fill="currentColor" />
+          </div>
 
           <p className="collabs-subtitle">
-            Explore our curated work across Tech Solutions with <strong>GenWeb Tech</strong> and Bestseller Publishing with <strong>Lekhok Tripura Publishers</strong>.
+            I partner with brands to create authentic, engaging and result-driven content that connects with people and builds real impact.
           </p>
 
           <nav className="collabs-breadcrumb">
@@ -199,326 +123,240 @@ export default function CollabsPage() {
       {/* Main Content Area */}
       <main className="collabs-main-content">
         {/* ==================================================================
-            FEATURED SHOWCASE 1: GENWEB TECH (WEB & DIGITAL SOLUTIONS)
+            SECTION 1: BRANDS I'VE WORKED WITH (3-CARD GRID)
             ================================================================== */}
-        <section className="featured-brand-showcase tech-showcase">
-          <div className="showcase-inner">
-            {/* Brand Header */}
-            <div className="brand-showcase-header">
-              <div className="brand-logo-pill">
-                <img src={genwebOfficialLogo} alt="GenWeb Tech Logo" className="brand-circle-pill-img" />
-                <span>GenWeb Tech</span>
-              </div>
-              <h2 className="brand-showcase-title with-circle-logo">
-                <div className="title-logo-circle">
-                  <img src={genwebOfficialLogo} alt="GenWeb Tech Logo" className="circle-logo-img" />
+        <section className="collabs-section brands-worked-section">
+          <div className="collabs-container">
+            {/* Header row */}
+            <div className="collabs-section-header-row">
+              <div className="section-title-group">
+                <div className="section-header-icon-circle award-circle">
+                  <Award size={22} />
                 </div>
-                <span>GenWeb Tech</span>
-                <span className="dot-divider">•</span>
-                <span className="highlight-text">Web & Tech Showcase</span>
-              </h2>
-              <p className="brand-showcase-tagline">
-                High-performance website architecture, modern UI/UX design systems, and digital platform development.
-              </p>
-            </div>
-
-            {/* Showcase Card: YamKitch */}
-            <div className="showcase-project-card">
-              <div className="showcase-image-col">
-                <div className="showcase-img-wrap">
-                  <img src={yamkitchImg} alt="YamKitch Website Mockup" className="showcase-mockup-img" />
-                  <span className="showcase-badge-pill">Featured Web Project</span>
-                </div>
-              </div>
-
-              <div className="showcase-info-col">
-                <div className="showcase-tags-row">
-                  <span className="tag-pill">GenWeb Tech</span>
-                  <span className="tag-pill tag-pill-dark-logo">
-                    <img src={yamkitchLogo} alt="YamKitch Logo" className="pill-logo-img" />
-                    <span>YamKitch</span>
-                  </span>
-                  <span className="tag-pill">UI/UX Design</span>
-                  <span className="tag-pill">Responsive Web</span>
-                </div>
-
-                <h3 className="project-headline with-circle-logo">
-                  <div className="title-logo-circle">
-                    <img src={yamkitchLogo} alt="YamKitch Logo" className="circle-logo-img" />
-                  </div>
-                  <span>YamKitch - Food Tech & Digital Web Solution</span>
-                </h3>
-
-                <p className="project-description">
-                  Designed and built a modern, responsive web application interface for YamKitch. Engineered for optimal performance, smooth user flow, and clean visual branding.
-                </p>
-
-                {/* Direct Live Website Link */}
-                <a
-                  href="https://www.yamkitch.in/"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="visit-live-site-btn"
-                >
-                  <Globe size={18} />
-                  <span>Visit Live Website: yamkitch.in</span>
-                  <ExternalLink size={16} />
-                </a>
-
-                {/* Bottom Section CTA Button for GenWeb Tech */}
-                <div className="brand-action-cta-box">
-                  <div className="cta-box-text">
-                    <strong>Need a website like YamKitch?</strong>
-                    <span>Get a custom, high-converting website built for your business.</span>
-                  </div>
-                  <a
-                    href="https://wa.me/918258892262?text=Hi%20Snaha%20%26%20GenWeb%20Tech%20team!%20I%20came%20across%20your%20portfolio%20website%20and%20I%20am%20interested%20in%20getting%20a%20professional%20website%20built.%20Please%20share%20details!"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="brand-action-btn"
-                  >
-                    <span>Get a Professional Website</span>
-                    <ArrowUpRight size={18} />
-                  </a>
+                <div>
+                  <h2 className="section-title-text">Brands I've Worked With</h2>
+                  <p className="section-subtitle-text">Successful collaborations and campaigns delivered.</p>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
 
-        {/* ==================================================================
-            FEATURED SHOWCASE 2: LEKHOK TRIPURA PUBLISHERS (বই ও প্রকাশনা)
-            ================================================================== */}
-        <section className="featured-brand-showcase publisher-showcase">
-          <div className="showcase-inner">
-            {/* Brand Header */}
-            <div className="brand-showcase-header">
-              <div className="brand-logo-pill publisher-pill">
-                <img src={lekhokTripuraLogo} alt="Lekhok Tripura Logo" className="brand-circle-pill-img" />
-                <span>Lekhok Tripura Publishers</span>
-              </div>
-              <h2 className="brand-showcase-title with-circle-logo">
-                <div className="title-logo-circle">
-                  <img src={lekhokTripuraLogo} alt="Lekhok Tripura Logo" className="circle-logo-img" />
-                </div>
-                <span>Lekhok Tripura Publishers</span>
-                <span className="dot-divider">•</span>
-                <span className="highlight-text">Published Books & Campaigns</span>
-              </h2>
-              <p className="brand-showcase-tagline">
-                Bestseller book launches, author branding, trailer reels, and multi-platform literature promotions.
-              </p>
-            </div>
+            {/* 3 Cards In A Row Grid */}
+            <div className="brands-worked-grid">
+              {allBrandCollabs.map((item) => {
+                const isSvgComponent = typeof item.logo === 'function';
+                const LogoComponent = isSvgComponent ? item.logo : null;
 
-            {/* Showcase Card: Lekhok Tripura */}
-            <div className="showcase-project-card layout-reverse">
-              <div className="showcase-info-col">
-                <div className="showcase-tags-row">
-                  <span className="tag-pill tag-pill-dark-logo">
-                    <img src={lekhokTripuraLogo} alt="Lekhok Tripura Logo" className="pill-logo-img" />
-                    <span>Lekhok Tripura</span>
-                  </span>
-                  <span className="tag-pill">Book Promotion</span>
-                  <span className="tag-pill">Author Branding</span>
-                </div>
-
-                <h3 className="project-headline with-circle-logo">
-                  <div className="title-logo-circle">
-                    <img src={lekhokTripuraLogo} alt="Lekhok Tripura Logo" className="circle-logo-img" />
-                  </div>
-                  <span>Lekhok Tripura - Published Books & Video Marketing</span>
-                </h3>
-
-                <p className="project-description">
-                  Full-scale book promotion campaign & video marketing for Lekhok Tripura Publishers. Produced bestseller book trailers, author spotlights, and short video reels that expanded novel circulation and reader reach across Tripura & Bengal.
-                </p>
-
-                {/* Direct Live Website Link */}
-                <a
-                  href="https://www.lekhoktripura.in/"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="visit-live-site-btn"
-                >
-                  <BookOpen size={18} />
-                  <span>Explore Publications: lekhoktripura.in</span>
-                  <ExternalLink size={16} />
-                </a>
-
-                {/* Bottom Section CTA Button for Lekhok Tripura */}
-                <div className="brand-action-cta-box publisher-cta-box">
-                  <div className="cta-box-text">
-                    <strong>Are you an author or publisher?</strong>
-                    <span>Promote & launch your book into a bestseller campaign.</span>
-                  </div>
-                  <a
-                    href="https://wa.me/918258892262?text=Hi%20Snaha%20%26%20Lekhok%20Tripura%20team!%20I%20am%20an%20author/publisher%20interested%20in%20book%20promotions.%20Please%20share%20details!"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="brand-action-btn publisher-action-btn"
-                  >
-                    <span>Promote Your Book Now</span>
-                    <ArrowUpRight size={18} />
-                  </a>
-                </div>
-              </div>
-
-              <div className="showcase-image-col">
-                <div className="showcase-img-wrap">
-                  <img src={lekhokTripuraImg} alt="Lekhok Tripura Book Showcase" className="showcase-mockup-img" />
-                  <span className="showcase-badge-pill">Bestseller Publisher Showcase</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Dynamic Database Brand Showcases */}
-        {dbCards.map((card) => (
-          <section key={card._id} className="featured-brand-showcase tech-showcase">
-            <div className="showcase-inner">
-              <div className="brand-showcase-header">
-                <div className="brand-logo-pill">
-                  <Sparkles size={14} />
-                  <span>{card.brandName}</span>
-                </div>
-                <h2 className="brand-showcase-title">
-                  <span>{card.brandName}</span>
-                  <span className="dot-divider">•</span>
-                  <span className="highlight-text">{card.category} Showcase</span>
-                </h2>
-                <p className="brand-showcase-tagline">{card.title}</p>
-              </div>
-
-              <div className="showcase-project-card">
-                <div className="showcase-image-col">
-                  <div className="showcase-img-wrap">
-                    <img src={card.imageUrl} alt={card.title} className="showcase-mockup-img" />
-                    <span className="showcase-badge-pill">{card.category}</span>
-                  </div>
-                </div>
-
-                <div className="showcase-info-col">
-                  {card.tags && card.tags.length > 0 && (
-                    <div className="showcase-tags-row">
-                      <span className="tag-pill">{card.brandName}</span>
-                      {card.tags.map((t, idx) => (
-                        <span key={idx} className="tag-pill">{t}</span>
-                      ))}
-                    </div>
-                  )}
-
-                  <h3 className="project-headline">{card.title}</h3>
-                  <p className="project-description">{card.description}</p>
-
-                  {card.websiteUrl && card.websiteUrl !== '#' && (
-                    <a
-                      href={card.websiteUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="visit-live-site-btn"
-                    >
-                      <Globe size={18} />
-                      <span>{card.ctaButtonText || `Explore ${card.brandName}: ${card.displayUrl || 'Website'}`}</span>
-                      <ExternalLink size={16} />
-                    </a>
-                  )}
-
-                  {card.hasActionCta && (
-                    <div className="brand-action-cta-box">
-                      <div className="cta-box-text">
-                        {card.actionCtaTitle && <strong>{card.actionCtaTitle}</strong>}
-                        {card.actionCtaSubtitle && <span>{card.actionCtaSubtitle}</span>}
-                      </div>
-                      {card.actionCtaBtnText && (
-                        <a
-                          href={(() => {
-                            const raw = (card.actionCtaLink || '').trim();
-                            if (raw.startsWith('http://') || raw.startsWith('https://')) return raw;
-                            const digits = raw.replace(/\D/g, '');
-                            const phone = digits.length === 10 ? `91${digits}` : digits || '918258892262';
-                            return `https://wa.me/${phone}?text=${encodeURIComponent(
-                              `Hi Snaha! I am interested in ${card.brandName || 'collaboration'} details.`
-                            )}`;
-                          })()}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="brand-action-btn"
-                        >
-                          <span>{card.actionCtaBtnText}</span>
-                          <ArrowUpRight size={18} />
-                        </a>
+                return (
+                  <div key={item.id} className="brand-worked-card">
+                    <div className="brand-card-logo-box">
+                      {isSvgComponent ? (
+                        <LogoComponent mode="card" />
+                      ) : (
+                        <img
+                          src={item.logo}
+                          alt={`${item.name} Logo`}
+                          style={{
+                            maxHeight: '88px',
+                            maxWidth: '220px',
+                            width: 'auto',
+                            height: 'auto',
+                            objectFit: 'contain',
+                          }}
+                        />
                       )}
                     </div>
-                  )}
+                    <div className="brand-card-meta">
+                      <h3 className="brand-card-title">{item.name}</h3>
+                      <p className="brand-card-category">{item.category}</p>
+                      {item.details && (
+                        <div className="brand-card-deliverable-tooltip">
+                          <span>{item.details}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Upcoming Slot: More exciting collaborations coming soon! */}
+              <div className="brand-worked-card upcoming-card">
+                <div className="upcoming-icon-wrap">
+                  <Plus size={32} />
+                </div>
+                <div className="upcoming-content">
+                  <span className="upcoming-title">More exciting collaborations coming soon!</span>
                 </div>
               </div>
             </div>
-          </section>
-        ))}
+
+            {/* Open to new collaborations banner */}
+            <div className="collab-open-callout">
+              <ShieldCheck size={20} className="open-callout-shield" />
+              <p className="open-callout-text">
+                Open to new collaborations.{' '}
+                <a href="#contact-section" className="open-callout-link">
+                  Let's create something amazing together!
+                </a>
+              </p>
+            </div>
+          </div>
+        </section>
 
         {/* ==================================================================
-            ALL BRAND COLLABORATIONS PORTFOLIO & FILTER GRID
+            SECTION 2: BRANDS I'VE CONNECTED WITH (OPPORTUNITIES)
             ================================================================== */}
-        <section className="all-collabs-portfolio-section">
-          <div className="portfolio-section-inner">
-            <div className="section-title-wrap">
-              <div className="portfolio-badge">
-                <span className="badge-dot" />
-                <span>Client Work</span>
+        <section className="collabs-section brands-connected-section">
+          <div className="collabs-container">
+            {/* Header row */}
+            <div className="section-title-group">
+              <div className="section-header-icon-circle handshake-circle">
+                <Handshake size={22} />
               </div>
-              <h2 className="section-heading">Explore All Brand Partnerships</h2>
-            </div>
-
-            {/* Filter Tabs */}
-            <div className="filter-tabs-row">
-              {categoriesList.map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  className={`filter-pill-btn ${activeFilter === cat ? 'active' : ''}`}
-                  onClick={() => setActiveFilter(cat)}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-
-            {/* Brand Projects Grid */}
-            <div className="brand-projects-grid">
-              {filteredProjects.map((item) => (
-                <div key={item.id} className="brand-card">
-                  <div className="card-media-wrap">
-                    <img src={item.image} alt={item.title} className="card-thumb-img" />
-                    <span className="card-brand-badge">{item.brand}</span>
-                  </div>
-
-                  <div className="card-body">
-                    <div className="card-tags-row">
-                      {item.tags.map((t, idx) => (
-                        <span key={idx} className="card-tag-pill">
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-
-                    <h4 className="card-title">{item.title}</h4>
-                    <p className="card-desc">{item.description}</p>
-
-                    {item.websiteUrl && item.websiteUrl !== '#' && (
-                      <a
-                        href={item.websiteUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="card-link"
-                      >
-                        <span>{item.displayUrl}</span>
-                        <ExternalLink size={14} />
-                      </a>
-                    )}
-                  </div>
+              <div>
+                <div className="section-title-with-pill">
+                  <h2 className="section-title-text">Brands I've Connected With</h2>
+                  <span className="opportunity-badge-pill">Opportunities</span>
                 </div>
-              ))}
+                <p className="section-subtitle-text">
+                  Exciting campaigns & collaboration opportunities I'm in conversation with.
+                </p>
+              </div>
+            </div>
+
+            {/* Circular Avatars Row */}
+            <div className="brands-avatar-strip">
+              {allBrandCollabs.map((item) => {
+                const isSvgComponent = typeof item.logo === 'function';
+                const LogoComponent = isSvgComponent ? item.logo : null;
+
+                return (
+                  <div key={`avatar-${item.id}`} className="brand-avatar-item">
+                    <div className="brand-avatar-circle-wrapper">
+                      {isSvgComponent ? (
+                        <LogoComponent mode="avatar" className="brand-avatar-svg" />
+                      ) : (
+                        <div
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: '#FFFFFF',
+                            borderRadius: '50%',
+                            padding: '4px',
+                            boxSizing: 'border-box',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          <img
+                            src={item.logo}
+                            alt={item.name}
+                            style={{ width: '90%', height: '90%', objectFit: 'contain', borderRadius: '50%' }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <span className="brand-avatar-label">{item.name}</span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Note banner card */}
+            <div className="opportunity-note-card">
+              <Sparkles size={24} className="opportunity-note-sparkle" />
+              <p className="opportunity-note-text">
+                These are brands I've shown interest in collaborating with. Looking forward to creating impactful content and driving great results together!
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ==================================================================
+            SECTION 3: COLLABORATION IMPACT (DARK STATS BANNER)
+            ================================================================== */}
+        <section className="collabs-section collab-impact-section">
+          <div className="collabs-container">
+            <div className="collab-impact-card">
+              {/* Left column */}
+              <div className="impact-left-col">
+                <h3 className="impact-heading">
+                  Collaboration <br />
+                  Impact
+                  <Sparkles size={20} className="impact-sparkle-star" />
+                </h3>
+                <p className="impact-desc">
+                  Delivering content that creates engagement, builds trust and drives results.
+                </p>
+              </div>
+
+              {/* Right stats grid */}
+              <div className="impact-stats-row">
+                <div className="impact-stat-cell">
+                  <div className="stat-icon-wrap">
+                    <Users size={28} />
+                  </div>
+                  <div className="stat-number">50K+</div>
+                  <div className="stat-label">Engaged Audience Across Platforms</div>
+                </div>
+
+                <div className="impact-divider" />
+
+                <div className="impact-stat-cell">
+                  <div className="stat-icon-wrap">
+                    <PlayCircle size={28} />
+                  </div>
+                  <div className="stat-number">1000+</div>
+                  <div className="stat-label">Pieces of Content Created</div>
+                </div>
+
+                <div className="impact-divider" />
+
+                <div className="impact-stat-cell">
+                  <div className="stat-icon-wrap">
+                    <Rocket size={28} />
+                  </div>
+                  <div className="stat-number">30+</div>
+                  <div className="stat-label">Successful Brand Collaborations</div>
+                </div>
+
+                <div className="impact-divider" />
+
+                <div className="impact-stat-cell">
+                  <div className="stat-icon-wrap">
+                    <TrendingUp size={28} />
+                  </div>
+                  <div className="stat-number">High</div>
+                  <div className="stat-label">Engagement & Conversion Driven</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ==================================================================
+            SECTION 4: BOTTOM COLLABORATION CTA
+            ================================================================== */}
+        <section className="collabs-section collab-cta-section">
+          <div className="collabs-container">
+            <div className="collab-cta-card">
+              <div className="cta-left-content">
+                <div className="cta-heart-graphic">
+                  <Heart size={32} />
+                </div>
+                <div className="cta-text-wrap">
+                  <h3 className="cta-headline">Let's collaborate and create something amazing!</h3>
+                  <p className="cta-subheadline">Have a project in mind? I'd love to hear from you.</p>
+                </div>
+              </div>
+
+              <div className="cta-right-btn-wrap">
+                <a href="#contact-section" className="cta-work-btn">
+                  <span>Let's Work Together</span>
+                  <ArrowRight size={18} />
+                </a>
+              </div>
             </div>
           </div>
         </section>
@@ -531,7 +369,9 @@ export default function CollabsPage() {
 
       {/* Contact & Footer */}
       <ScrollReveal variant="fade-up">
-        <ContactSection />
+        <div id="contact-section">
+          <ContactSection />
+        </div>
       </ScrollReveal>
       <ScrollReveal variant="fade-up">
         <FooterSection />

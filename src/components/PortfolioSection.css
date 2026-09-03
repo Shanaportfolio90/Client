@@ -1,279 +1,383 @@
-.portfolio-section-container {
+/* ==========================================================================
+   A GLIMPSE OF MY WORK - PORTFOLIO SECTION
+   ========================================================================== */
+
+.glimpse-portfolio-section {
   width: 100%;
-  background-color: #191412;
-  color: #FFFFFF;
-  padding: 100px 24px;
+  padding: 90px 24px 80px;
   position: relative;
-  z-index: 1;
+  z-index: 2;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.portfolio-inner {
-  max-width: 1240px;
+.glimpse-container {
+  max-width: 1280px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 60px;
+  align-items: center;
 }
 
-/* Section Header */
-.portfolio-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.portfolio-header-left {
+/* ==========================================================================
+   HEADER
+   ========================================================================== */
+.glimpse-header {
+  text-align: center;
+  margin-bottom: 34px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-}
-
-.portfolio-badge {
-  display: inline-flex;
   align-items: center;
-  gap: 8px;
-}
-
-.badge-circles {
-  display: flex;
-  align-items: center;
-}
-
-.circle-white {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background-color: #FFFFFF;
-}
-
-.circle-orange {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background-color: #FF9F1C;
-  margin-left: -5px;
-}
-
-.badge-label {
-  font-size: 16px;
-  font-weight: 600;
-  color: #D6D3D1;
-}
-
-.portfolio-title {
-  font-size: 52px;
-  font-weight: 800;
-  color: #FFFFFF;
-  letter-spacing: -1.5px;
-  line-height: 1.15;
-  margin: 0;
-  position: relative;
-}
-
-.portfolio-title .highlight-text {
-  color: #FF9F1C;
-}
-
-.portfolio-title .leaf-icon {
-  display: inline-flex;
-  margin-left: 6px;
-  vertical-align: middle;
-}
-
-/* View All Projects Button */
-.view-all-projects-btn {
-  display: inline-flex;
-  align-items: center;
-  background-color: rgba(255, 255, 255, 0.08);
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
-  padding: 6px 6px 6px 24px;
-  border-radius: 9999px;
-  text-decoration: none;
-  color: #FFFFFF;
-  font-size: 15px;
-  font-weight: 600;
   gap: 14px;
+}
+
+.glimpse-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 18px;
+  border-radius: 9999px;
+  background: rgba(178, 83, 83, 0.08);
+  border: 1px solid rgba(178, 83, 83, 0.22);
   transition: all 0.3s ease;
-  white-space: nowrap;
 }
 
-.view-all-projects-btn > span {
-  color: #FFFFFF;
-}
-
-.view-all-projects-btn .btn-arrow-circle {
-  width: 32px;
-  height: 32px;
+.badge-sparkle-dot {
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  background-color: #FF9F1C;
-  color: #191412;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background-color: #B25353;
+  box-shadow: 0 0 8px rgba(178, 83, 83, 0.6);
+  display: inline-block;
 }
 
-.view-all-projects-btn:hover {
-  background-color: rgba(255, 255, 255, 0.16);
-  border-color: #FF9F1C;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(255, 159, 28, 0.2);
+.badge-text {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 3.2px;
+  text-transform: uppercase;
+  color: #B25353;
 }
 
-/* Projects Cards List */
-.projects-list {
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-}
-
-/* Chamfered Card Notch Container */
-.project-card {
-  background-color: #231E1B;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 32px;
-  padding: 32px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  gap: 48px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  clip-path: polygon(
-    0 0,
-    95% 0,
-    100% 30px,
-    100% 100%,
-    5% 100%,
-    0 93%
-  );
-}
-
-.project-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+.dark-mode .glimpse-badge-pill {
+  background: rgba(255, 159, 28, 0.1);
   border-color: rgba(255, 159, 28, 0.3);
 }
 
-.layout-image-right {
-  grid-template-areas: "info image";
-}
-
-.layout-image-left {
-  grid-template-areas: "image info";
-}
-
-.project-image-column {
-  grid-area: image;
-  width: 100%;
-}
-
-.project-image-wrapper {
-  width: 100%;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.project-mockup-img {
-  width: 100%;
-  height: auto;
-  display: block;
-  object-fit: cover;
-  transition: transform 0.5s ease;
-}
-
-.project-card:hover .project-mockup-img {
-  transform: scale(1.03);
-}
-
-.project-info-column {
-  grid-area: info;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 20px;
-}
-
-/* Category Tags Row */
-.project-tags-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.project-tag-pill {
+.dark-mode .badge-sparkle-dot {
   background-color: #FF9F1C;
-  color: #191412;
-  font-size: 14px;
-  font-weight: 700;
-  padding: 6px 18px;
-  border-radius: 9999px;
-  letter-spacing: -0.2px;
+  box-shadow: 0 0 8px rgba(255, 159, 28, 0.7);
 }
 
-.project-title {
-  font-size: 32px;
-  font-weight: 800;
-  color: #FFFFFF;
-  letter-spacing: -1px;
-  line-height: 1.25;
+.dark-mode .badge-text {
+  color: #FF9F1C;
+}
+
+.glimpse-title {
+  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  font-size: 58px;
+  font-weight: 600;
+  color: #1F1917;
+  letter-spacing: -0.6px;
   margin: 0;
+  line-height: 1.12;
+  text-align: center;
 }
 
-.project-description {
-  font-size: 16px;
-  line-height: 1.6;
-  color: #A8A29E;
-  margin: 0;
+.glimpse-title-highlight {
+  font-style: italic;
+  font-weight: 600;
+  color: #9E4747;
+  position: relative;
+  display: inline-block;
+  padding: 0 4px;
 }
 
-.project-action-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #FFFFFF;
+.dark-mode .glimpse-title {
+  color: #F7F5EE;
+}
+
+.dark-mode .glimpse-title-highlight {
+  color: #FF9F1C;
+}
+
+/* ==========================================================================
+   CATEGORY FILTER PILLS
+   ========================================================================== */
+.glimpse-filter-pills-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  margin-top: 8px;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 40px;
 }
 
-.project-action-btn:hover {
+.glimpse-pill-btn {
+  padding: 8px 24px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: #FFFFFF;
+  color: #574D4D;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+.glimpse-pill-btn:hover {
+  border-color: #B25353;
+  color: #B25353;
+  transform: translateY(-1px);
+}
+
+.glimpse-pill-btn.active {
+  background-color: #9E4747;
+  color: #FFFFFF;
+  border-color: #9E4747;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(158, 71, 71, 0.25);
+}
+
+/* Dark Mode Filter Pills */
+.dark-mode .glimpse-pill-btn {
+  background-color: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #D6D3D1;
+}
+
+.dark-mode .glimpse-pill-btn:hover {
+  border-color: #FF9F1C;
+  color: #FF9F1C;
+}
+
+.dark-mode .glimpse-pill-btn.active {
   background-color: #FF9F1C;
   color: #191412;
   border-color: #FF9F1C;
-  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 16px rgba(255, 159, 28, 0.35);
 }
 
-/* Responsive Media Queries */
+/* ==========================================================================
+   5-COLUMN CARDS GRID
+   ========================================================================== */
+.glimpse-cards-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  margin-bottom: 44px;
+}
+
+.glimpse-card-item {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.3s ease;
+}
+
+.glimpse-card-item:hover {
+  transform: translateY(-4px);
+}
+
+/* Vertical Thumbnail Box (9:14 aspect ratio) */
+.glimpse-thumb-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 9 / 13.5;
+  border-radius: 18px;
+  overflow: hidden;
+  background-color: #EFEAE6;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode .glimpse-thumb-wrapper {
+  background-color: #26201D;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.glimpse-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glimpse-card-item:hover .glimpse-thumb-img {
+  transform: scale(1.04);
+}
+
+/* Play Button Overlay (centered at bottom of image) */
+.glimpse-play-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 14px;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.35) 0%,
+    rgba(0, 0, 0, 0) 40%
+  );
+  pointer-events: none;
+}
+
+.glimpse-play-circle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease;
+}
+
+.glimpse-play-icon {
+  margin-left: 2px;
+}
+
+.glimpse-card-item:hover .glimpse-play-circle {
+  background: rgba(255, 255, 255, 0.5);
+  transform: scale(1.1);
+}
+
+/* Card Meta Info Below Thumbnail */
+.glimpse-card-meta {
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.glimpse-card-title {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: #191412;
+  margin: 0;
+  line-height: 1.25;
+  transition: color 0.2s ease;
+}
+
+.dark-mode .glimpse-card-title {
+  color: #FFFFFF;
+}
+
+.glimpse-card-item:hover .glimpse-card-title {
+  color: #B25353;
+}
+
+.dark-mode .glimpse-card-item:hover .glimpse-card-title {
+  color: #FF9F1C;
+}
+
+.glimpse-card-subtitle {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #944D4D;
+  letter-spacing: 0.2px;
+}
+
+.dark-mode .glimpse-card-subtitle {
+  color: #A8A29E;
+}
+
+/* ==========================================================================
+   BOTTOM CALL TO ACTION BUTTON
+   ========================================================================== */
+.glimpse-bottom-action {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.glimpse-view-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 28px;
+  border-radius: 9999px;
+  border: 1.5px solid #C47272;
+  background-color: transparent;
+  color: #944D4D;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.glimpse-view-more-btn:hover {
+  background-color: #9E4747;
+  color: #FFFFFF;
+  border-color: #9E4747;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(158, 71, 71, 0.2);
+}
+
+.dark-mode .glimpse-view-more-btn {
+  border-color: #FF9F1C;
+  color: #FF9F1C;
+}
+
+.dark-mode .glimpse-view-more-btn:hover {
+  background-color: #FF9F1C;
+  color: #191412;
+  box-shadow: 0 4px 16px rgba(255, 159, 28, 0.35);
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN
+   ========================================================================== */
 @media (max-width: 1024px) {
-  .project-card {
-    grid-template-columns: 1fr;
-    grid-template-areas: 
-      "image"
-      "info";
-    gap: 32px;
-    padding: 24px;
+  .glimpse-cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
   }
 
-  .portfolio-title {
-    font-size: 40px;
-  }
-
-  .project-title {
-    font-size: 24px;
+  .glimpse-title {
+    font-size: 46px;
   }
 }
 
 @media (max-width: 640px) {
-  .portfolio-header {
-    flex-direction: column;
-    align-items: flex-start;
+  .glimpse-portfolio-section {
+    padding: 60px 16px 50px;
+  }
+
+  .glimpse-title {
+    font-size: 34px;
+  }
+
+  .glimpse-filter-pills-row {
+    gap: 6px;
+    margin-bottom: 28px;
+  }
+
+  .glimpse-pill-btn {
+    padding: 6px 16px;
+    font-size: 12.5px;
+  }
+
+  .glimpse-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .glimpse-card-title {
+    font-size: 14px;
+  }
+
+  .glimpse-card-subtitle {
+    font-size: 11.5px;
   }
 }

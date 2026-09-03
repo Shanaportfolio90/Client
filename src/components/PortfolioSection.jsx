@@ -1,100 +1,173 @@
-import React from 'react';
-import { ArrowRight, ArrowUpRight } from 'lucide-react';
-import p1Img from '../assets/project-1-mockup.png';
-import p2Img from '../assets/project-2-mockup.png';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Play, ArrowRight, Sparkles, X } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 import './PortfolioSection.css';
 
 export default function PortfolioSection() {
-  const projects = [
+  const [activeFilter, setActiveFilter] = useState('All');
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [dbVideos, setDbVideos] = useState([]);
+
+  // Fetch dynamic videos from Admin Media Manager if available
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/media`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setDbVideos(data);
+        }
+      })
+      .catch((err) => console.error('Failed to load portfolio media:', err));
+  }, []);
+
+  const filterTabs = [
+    'All',
+    'Reels',
+    'Fashion',
+    'Beauty',
+    'Lifestyle',
+    'Food',
+    'UGC',
+    'Comedy',
+  ];
+
+  // The 5 featured creator reel cards using Snaha's authentic photos
+  const defaultReels = [
     {
-      id: 1,
-      title: 'Bakery Shop - Bakery Shop Mobile App Solution',
-      description:
-        'Modern bakery app for exploring fresh bakery products, easy ordering, seamless shopping, and fast doorstep delivery.',
-      tags: ['UI/UX Design', 'App Design', 'Wireframe'],
-      image: p1Img,
-      layout: 'image-left',
+      id: 'reel-1',
+      title: 'Cafe Diaries',
+      subtitle: 'Lifestyle • Reel',
+      image: '/WhatsApp Image 2026-09-03 at 09.08.41.jpeg',
+      videoUrl: 'https://www.instagram.com/',
+      categories: ['All', 'Reels', 'Lifestyle', 'Food'],
     },
     {
-      id: 2,
-      title: 'Clothing Store - Clothing E Commerce Website',
-      description:
-        'Modern clothing store website for browsing fashion collections, seamless shopping, secure checkout, and smooth online purchasing experience.',
-      tags: ['UI/UX Design', 'Web Design', 'Wireframe'],
-      image: p2Img,
-      layout: 'image-right',
+      id: 'reel-2',
+      title: 'Ethnic Fashion Look',
+      subtitle: 'Fashion • Reel',
+      image: '/WhatsApp Image 2026-09-03 at 09.18.54.jpeg',
+      videoUrl: 'https://www.instagram.com/',
+      categories: ['All', 'Reels', 'Fashion', 'Beauty'],
+    },
+    {
+      id: 'reel-3',
+      title: 'Wedding Joy & Moments',
+      subtitle: 'UGC • Reel',
+      image: '/WhatsApp Image 2026-09-03 at 09.18.55.jpeg',
+      videoUrl: 'https://www.instagram.com/',
+      categories: ['All', 'Reels', 'UGC', 'Lifestyle', 'Comedy'],
+    },
+    {
+      id: 'reel-4',
+      title: 'Royal Bridal Elegance',
+      subtitle: 'Beauty • Reel',
+      image: '/WhatsApp Image 2026-09-03 at 09.18.00.jpeg',
+      videoUrl: 'https://www.instagram.com/',
+      categories: ['All', 'Reels', 'Beauty', 'Fashion'],
+    },
+    {
+      id: 'reel-5',
+      title: 'Traditional Banarasi Saree',
+      subtitle: 'Fashion • Reel',
+      image: '/WhatsApp Image 2026-09-03 at 09.18.58.jpeg',
+      videoUrl: 'https://www.instagram.com/',
+      categories: ['All', 'Reels', 'Fashion', 'Reels'],
     },
   ];
 
+  // Map any additional videos from DB into the format
+  const formattedDbVideos = dbVideos.map((v) => ({
+    id: v._id,
+    title: v.title,
+    subtitle: `${v.category || 'Creator'} • Reel`,
+    image: v.thumbnailUrl,
+    videoUrl: v.videoUrl,
+    categories: ['All', 'Reels', v.category],
+  }));
+
+  // Combine default with DB videos (avoiding duplicates)
+  const allCards = [...defaultReels, ...formattedDbVideos.filter(dv => dv.image)];
+
+  // Filter items based on active pill
+  const filteredCards = allCards.filter((card) => {
+    if (activeFilter === 'All') return true;
+    return card.categories.some(
+      (cat) => cat && cat.toLowerCase() === activeFilter.toLowerCase()
+    );
+  });
+
+  const handleCardClick = (card) => {
+    if (card.videoUrl && card.videoUrl !== '#') {
+      window.open(card.videoUrl, '_blank', 'noopener,noreferrer');
+    }
+  };
+
   return (
-    <section id="portfolio" className="portfolio-section-container">
-      <div className="portfolio-inner">
+    <section id="portfolio" className="glimpse-portfolio-section">
+      <div className="glimpse-container">
         {/* Section Header */}
-        <div className="portfolio-header">
-          <div className="portfolio-header-left">
-            <div className="portfolio-badge">
-              <div className="badge-circles">
-                <span className="circle-white" />
-                <span className="circle-orange" />
-              </div>
-              <span className="badge-label">My Portfolio</span>
-            </div>
-
-            <h2 className="portfolio-title">
-              Let's Have a <span className="highlight-text">Look</span>
-              <span className="leaf-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 2C6.5 2 2 6.5 2 12c0 2.5 1 4.8 2.6 6.6L12 12V2z" fill="#FFFFFF" />
-                  <path d="M18 6c-3 0-5 2-5 5s2 5 5 5 5-2 5-5-2-5-5-5z" fill="#FFFFFF" opacity="0.8" />
-                </svg>
-              </span>
-              <br />
-              <span className="highlight-text">at My Portfolio</span>
-            </h2>
+        <div className="glimpse-header">
+          <div className="glimpse-badge-pill">
+            <span className="badge-sparkle-dot" />
+            <span className="badge-text">MY PORTFOLIO</span>
+            <span className="badge-sparkle-dot" />
           </div>
-
-          <a href="#all-projects" className="view-all-projects-btn">
-            <span>View All Projects</span>
-            <div className="btn-arrow-circle">
-              <ArrowRight size={14} />
-            </div>
-          </a>
+          <h2 className="glimpse-title">
+            A Glimpse Of <span className="glimpse-title-highlight">My Work</span>
+          </h2>
         </div>
 
-        {/* Project Cards List */}
-        <div className="projects-list">
-          {projects.map((project) => (
-            <div
-              key={project.id}
-              className={`project-card ${project.layout === 'image-left' ? 'layout-image-left' : 'layout-image-right'}`}
+        {/* Category Filter Pills */}
+        <div className="glimpse-filter-pills-row">
+          {filterTabs.map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              className={`glimpse-pill-btn ${activeFilter === tab ? 'active' : ''}`}
+              onClick={() => setActiveFilter(tab)}
             >
-              {/* Project Showcase Image */}
-              <div className="project-image-column">
-                <div className="project-image-wrapper">
-                  <img src={project.image} alt={project.title} className="project-mockup-img" />
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        {/* 5-Column Vertical Cards Grid */}
+        <div className="glimpse-cards-grid">
+          {filteredCards.slice(0, 5).map((item) => (
+            <div
+              key={item.id}
+              className="glimpse-card-item"
+              onClick={() => handleCardClick(item)}
+            >
+              <div className="glimpse-thumb-wrapper">
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="glimpse-thumb-img"
+                  loading="lazy"
+                />
+                <div className="glimpse-play-overlay">
+                  <div className="glimpse-play-circle">
+                    <Play size={15} fill="#FFFFFF" color="#FFFFFF" className="glimpse-play-icon" />
+                  </div>
                 </div>
               </div>
 
-              {/* Project Details Info */}
-              <div className="project-info-column">
-                <div className="project-tags-row">
-                  {project.tags.map((tag, i) => (
-                    <span key={i} className="project-tag-pill">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-
-                <h3 className="project-title">{project.title}</h3>
-
-                <p className="project-description">{project.description}</p>
-
-                <a href="#project-detail" className="project-action-btn" aria-label="View project details">
-                  <ArrowUpRight size={20} />
-                </a>
+              <div className="glimpse-card-meta">
+                <h3 className="glimpse-card-title">{item.title}</h3>
+                <span className="glimpse-card-subtitle">{item.subtitle}</span>
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Bottom Call to Action Button */}
+        <div className="glimpse-bottom-action">
+          <Link to="/collabs" className="glimpse-view-more-btn">
+            <span>View More Work</span>
+            <ArrowRight size={16} />
+          </Link>
         </div>
       </div>
     </section>

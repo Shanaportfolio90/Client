@@ -9,6 +9,7 @@ import QuoteCard from '../components/QuoteCard';
 import SkillTags from '../components/SkillTags';
 import MarqueeSlider from '../components/MarqueeSlider';
 import AboutSection from '../components/AboutSection';
+import PortfolioSection from '../components/PortfolioSection';
 import PricingSection from '../components/PricingSection';
 import ContactSection from '../components/ContactSection';
 import FooterSection from '../components/FooterSection';
@@ -73,6 +74,11 @@ export default function Home() {
       {/* About Me Section ("Who is Snaha Chakraborty?") */}
       <ScrollReveal variant="fade-up">
         <AboutSection />
+      </ScrollReveal>
+
+      {/* A Glimpse Of My Work - Portfolio Reel Showcase */}
+      <ScrollReveal variant="fade-up">
+        <PortfolioSection />
       </ScrollReveal>
 
       {/* Pricing Table Section ("My Pricing Model") */}

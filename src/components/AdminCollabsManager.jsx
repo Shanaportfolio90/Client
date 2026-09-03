@@ -4,44 +4,56 @@ import {
   Upload,
   RefreshCw,
   Image as ImageIcon,
-  PlusCircle,
   Save,
   XCircle,
   Edit3,
   Trash2,
   ExternalLink,
-  MessageSquare,
+  PlusCircle,
+  CheckCircle,
 } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 import './AdminCollabsManager.css';
 
-export default function AdminCollabsManager({ token, collabsList, setCollabsList }) {
+export default function AdminCollabsManager({ token, collabsList = [], setCollabsList }) {
   const [collabEditingId, setCollabEditingId] = useState(null);
   const [uploadingCollabImage, setUploadingCollabImage] = useState(false);
   const [publishingCollab, setPublishingCollab] = useState(false);
+  const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
+  const [searchTerm, setSearchTerm] = useState('');
 
   const [collabForm, setCollabForm] = useState({
     brandName: '',
-    category: 'Tech & Web',
+    category: 'Skincare • Lifestyle',
     customCategory: '',
-    title: '',
-    description: '',
-    websiteUrl: '',
-    displayUrl: '',
-    ctaButtonText: '',
-    hasActionCta: false,
-    actionCtaTitle: '',
-    actionCtaSubtitle: '',
-    actionCtaBtnText: '',
-    actionCtaLink: '',
+    title: '', // used for Work Details / Deliverables
     imageUrl: '',
-    tags: '',
+    websiteUrl: '',
+    description: '',
   });
 
-  // Image Upload to Cloudinary for Collabs
+  const categoryPresets = [
+    'Skincare • Lifestyle',
+    'Community • Lifestyle',
+    'Haircare',
+    'Fashion',
+    'Food • Health',
+    'Beauty • Personal Care',
+    'Ethnic Fashion',
+    'Tech & Digital',
+    'Fitness & Wellness',
+    'CUSTOM',
+  ];
+
+  // Image Upload to Cloudinary for Brand Logo
   const handleCollabImageUpload = async (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Logo file size must be less than 10MB.');
+      return;
+    }
 
     setUploadingCollabImage(true);
     const reader = new FileReader();
@@ -61,11 +73,12 @@ export default function AdminCollabsManager({ token, collabsList, setCollabsList
         const data = await res.json();
         if (res.ok && data.url) {
           setCollabForm((prev) => ({ ...prev, imageUrl: data.url }));
+          setStatusMessage({ type: 'success', text: 'Logo uploaded successfully to Cloudinary!' });
         } else {
           alert(data.message || 'Image upload failed.');
         }
       } catch (err) {
-        console.error('Collab image upload error:', err);
+        console.error('Collab logo upload error:', err);
         alert('Image upload failed. Please try again.');
       } finally {
         setUploadingCollabImage(false);
@@ -79,33 +92,25 @@ export default function AdminCollabsManager({ token, collabsList, setCollabsList
   const handleCollabSubmit = async (e) => {
     e.preventDefault();
     setPublishingCollab(true);
+    setStatusMessage({ type: '', text: '' });
 
     const finalCategory =
-      collabForm.category === 'CUSTOM' ? collabForm.customCategory : collabForm.category;
+      collabForm.category === 'CUSTOM' ? collabForm.customCategory.trim() : collabForm.category;
 
-    if (!collabForm.brandName || !finalCategory || !collabForm.title || !collabForm.imageUrl) {
-      alert('Please fill in Brand Name, Category, Title, and Upload Image.');
+    if (!collabForm.brandName.trim() || !finalCategory || !collabForm.title.trim() || !collabForm.imageUrl) {
+      alert('Please fill in Brand Name, Category, Work Details, and provide a Brand Logo.');
       setPublishingCollab(false);
       return;
     }
 
     const payload = {
-      brandName: collabForm.brandName,
+      brandName: collabForm.brandName.trim(),
       category: finalCategory,
-      title: collabForm.title,
-      description: collabForm.description,
-      websiteUrl: collabForm.websiteUrl || '#',
-      displayUrl: collabForm.displayUrl || '',
-      ctaButtonText: collabForm.ctaButtonText || '',
-      hasActionCta: Boolean(collabForm.hasActionCta),
-      actionCtaTitle: collabForm.actionCtaTitle || '',
-      actionCtaSubtitle: collabForm.actionCtaSubtitle || '',
-      actionCtaBtnText: collabForm.actionCtaBtnText || '',
-      actionCtaLink: collabForm.actionCtaLink || '',
+      title: collabForm.title.trim(), // Work Details / Deliverables
+      description: collabForm.description || '',
+      websiteUrl: collabForm.websiteUrl.trim() || '#',
+      displayUrl: collabForm.websiteUrl.trim() ? collabForm.websiteUrl.trim().replace(/^https?:\/\//, '') : '',
       imageUrl: collabForm.imageUrl,
-      tags: collabForm.tags
-        ? collabForm.tags.split(',').map((t) => t.trim()).filter(Boolean)
-        : [],
     };
 
     try {
@@ -126,24 +131,25 @@ export default function AdminCollabsManager({ token, collabsList, setCollabsList
       let data = {};
       try {
         data = await res.json();
-      } catch (e) {
-        console.error('Non-JSON response:', e);
+      } catch (err) {
+        console.error('Non-JSON response:', err);
       }
 
       if (res.ok && data.card) {
         if (collabEditingId) {
           setCollabsList(collabsList.map((item) => (item._id === collabEditingId ? data.card : item)));
+          setStatusMessage({ type: 'success', text: `Collaboration "${data.card.brandName}" updated successfully!` });
         } else {
           setCollabsList([data.card, ...collabsList]);
+          setStatusMessage({ type: 'success', text: `Collaboration "${data.card.brandName}" published live to Collab page!` });
         }
         resetCollabForm();
-        alert(collabEditingId ? 'Collab card updated!' : 'Collab card added!');
       } else {
-        alert(data.message || `Failed to save collab card (Server status: ${res.status}).`);
+        alert(data.message || 'Failed to save collaboration card.');
       }
     } catch (err) {
-      console.error('Error saving collab card:', err);
-      alert('Network / Server error while saving collab card.');
+      console.error('Submit error:', err);
+      alert('Network error while saving collaboration card.');
     } finally {
       setPublishingCollab(false);
     }
@@ -151,38 +157,40 @@ export default function AdminCollabsManager({ token, collabsList, setCollabsList
 
   const handleEditCollab = (item) => {
     setCollabEditingId(item._id);
+    const isStandardCategory = categoryPresets.includes(item.category);
     setCollabForm({
       brandName: item.brandName || '',
-      category: item.category || 'Tech & Web',
-      customCategory: '',
+      category: isStandardCategory ? item.category : 'CUSTOM',
+      customCategory: isStandardCategory ? '' : item.category || '',
       title: item.title || '',
       description: item.description || '',
-      websiteUrl: item.websiteUrl || '',
-      displayUrl: item.displayUrl || '',
-      ctaButtonText: item.ctaButtonText || '',
-      hasActionCta: Boolean(item.hasActionCta),
-      actionCtaTitle: item.actionCtaTitle || '',
-      actionCtaSubtitle: item.actionCtaSubtitle || '',
-      actionCtaBtnText: item.actionCtaBtnText || '',
-      actionCtaLink: item.actionCtaLink || '',
+      websiteUrl: item.websiteUrl && item.websiteUrl !== '#' ? item.websiteUrl : '',
       imageUrl: item.imageUrl || '',
-      tags: item.tags ? item.tags.join(', ') : '',
     });
-    window.scrollTo({ top: 300, behavior: 'smooth' });
+    setStatusMessage({ type: 'info', text: `Editing "${item.brandName}" collaboration.` });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleDeleteCollab = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this brand card?')) return;
+  const handleDeleteCollab = async (id, brandName) => {
+    if (!window.confirm(`Are you sure you want to delete collaboration "${brandName || 'this brand'}"?`)) return;
+
     try {
       const res = await fetch(`${API_BASE_URL}/api/admin/collabs/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
+
       if (res.ok) {
         setCollabsList(collabsList.filter((item) => item._id !== id));
+        if (collabEditingId === id) resetCollabForm();
+        setStatusMessage({ type: 'success', text: `Collaboration "${brandName}" deleted.` });
+      } else {
+        const data = await res.json();
+        alert(data.message || 'Failed to delete collaboration card.');
       }
     } catch (err) {
       console.error('Error deleting collab card:', err);
+      alert('Network error while deleting.');
     }
   };
 
@@ -190,364 +198,458 @@ export default function AdminCollabsManager({ token, collabsList, setCollabsList
     setCollabEditingId(null);
     setCollabForm({
       brandName: '',
-      category: 'Tech & Web',
+      category: 'Skincare • Lifestyle',
       customCategory: '',
       title: '',
-      description: '',
-      websiteUrl: '',
-      displayUrl: '',
-      ctaButtonText: '',
-      hasActionCta: false,
-      actionCtaTitle: '',
-      actionCtaSubtitle: '',
-      actionCtaBtnText: '',
-      actionCtaLink: '',
       imageUrl: '',
-      tags: '',
+      websiteUrl: '',
+      description: '',
     });
   };
 
+  const filteredCollabs = collabsList.filter((c) => {
+    if (!searchTerm) return true;
+    const q = searchTerm.toLowerCase();
+    return (
+      c.brandName?.toLowerCase().includes(q) ||
+      c.category?.toLowerCase().includes(q) ||
+      c.title?.toLowerCase().includes(q)
+    );
+  });
+
   return (
-    <div className="collabs-manager-container">
-      {/* Collab Card Form Box */}
-      <div className={`collab-form-card ${collabEditingId ? 'is-edit-mode' : ''}`}>
-        <div className="collab-form-header">
-          <div className="collab-header-icon-badge">
-            <Sparkles size={24} />
-          </div>
-          <div className="collab-header-text">
-            <h2>{collabEditingId ? 'Edit Brand Collab Card' : 'Add New Collab / Brand Showcase Card'}</h2>
-            <p>
-              {collabEditingId
-                ? 'Update details for this brand collaboration card'
-                : 'Create a new brand card to display on the live Collabs page'}
-            </p>
+    <div className="tab-content-area admin-collabs-container">
+      {/* Form Card */}
+      <div className="admin-media-form-card">
+        <div className="card-header-bar">
+          <div className="header-title-group">
+            <Sparkles size={22} className="header-icon" />
+            <div>
+              <h2>{collabEditingId ? 'Edit Brand Collaboration' : 'Add New Brand Collaboration'}</h2>
+              <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#78716C' }}>
+                Add brand logos, work deliverables, and details. Collaborations will publish directly to your live Collab page.
+              </p>
+            </div>
           </div>
           {collabEditingId && (
-            <button type="button" className="collab-cancel-edit-btn" onClick={resetCollabForm}>
-              <XCircle size={16} /> Cancel Editing
+            <button type="button" className="cancel-edit-btn" onClick={resetCollabForm}>
+              <XCircle size={14} />
+              <span>Cancel Edit</span>
             </button>
           )}
         </div>
 
-        <form onSubmit={handleCollabSubmit} className="collab-form-body">
-          <div className="collab-form-grid">
-            {/* Brand Name */}
-            <div className="collab-input-group">
-              <label>
-                Brand Name <span className="req">*</span>
-              </label>
+        {statusMessage.text && (
+          <div
+            style={{
+              padding: '12px 18px',
+              borderRadius: '12px',
+              marginBottom: '20px',
+              fontSize: '14px',
+              fontWeight: '700',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              backgroundColor: statusMessage.type === 'success' ? 'rgba(34, 197, 94, 0.12)' : 'rgba(255, 159, 28, 0.12)',
+              color: statusMessage.type === 'success' ? '#16A34A' : '#FF9F1C',
+              border: `1px solid ${statusMessage.type === 'success' ? 'rgba(34, 197, 94, 0.3)' : 'rgba(255, 159, 28, 0.3)'}`,
+            }}
+          >
+            <CheckCircle size={16} />
+            <span>{statusMessage.text}</span>
+          </div>
+        )}
+
+        <form onSubmit={handleCollabSubmit} className="media-upload-form">
+          <div className="form-grid-2">
+            <div className="modal-form-group">
+              <label>Brand Name *</label>
               <input
                 type="text"
-                className="collab-text-input"
-                placeholder="e.g. GenWeb Tech, Lekhok Tripura, YamKitch"
+                placeholder="Ex. Dreabeai, Tandul Clothing, Nike..."
                 value={collabForm.brandName}
                 onChange={(e) => setCollabForm({ ...collabForm, brandName: e.target.value })}
                 required
               />
             </div>
 
-            {/* Category Selection & Custom Category */}
-            <div className="collab-input-group">
-              <label>
-                Category <span className="req">*</span>
-              </label>
+            <div className="modal-form-group">
+              <label>Category / Niche *</label>
               <select
-                className="collab-select-input"
                 value={collabForm.category}
                 onChange={(e) => setCollabForm({ ...collabForm, category: e.target.value })}
+                className="select-category-input"
+                required
               >
-                <option value="Tech & Web">Tech & Web</option>
-                <option value="Book Publishers">Book Publishers</option>
-                <option value="Shorts & Reels">Shorts & Reels</option>
-                <option value="Brand Collab">Brand Collab</option>
-                <option value="CUSTOM">+ Add New Custom Category...</option>
+                {categoryPresets.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat === 'CUSTOM' ? '+ Custom Niche / Category' : cat}
+                  </option>
+                ))}
               </select>
-            </div>
 
-            {collabForm.category === 'CUSTOM' && (
-              <div className="collab-input-group full-width">
-                <label>
-                  Enter Custom Category Name <span className="req">*</span>
-                </label>
+              {collabForm.category === 'CUSTOM' && (
                 <input
                   type="text"
-                  className="collab-text-input"
-                  placeholder="e.g. E-Commerce, Food Tech, Fashion & Beauty"
+                  placeholder="Enter custom category (e.g. Travel • Adventure)"
                   value={collabForm.customCategory}
                   onChange={(e) => setCollabForm({ ...collabForm, customCategory: e.target.value })}
+                  style={{ marginTop: '10px' }}
                   required
                 />
-              </div>
-            )}
+              )}
+            </div>
+          </div>
 
-            {/* Project Title */}
-            <div className="collab-input-group full-width">
-              <label>
-                Card Title / Headline <span className="req">*</span>
-              </label>
+          <div className="form-grid-2">
+            <div className="modal-form-group">
+              <label>Work Details & Deliverables *</label>
               <input
                 type="text"
-                className="collab-text-input"
-                placeholder="e.g. YamKitch - Food Tech & Digital Web Solution"
+                placeholder="Ex. Everyday Made Better • 2 reels • 2 stories"
                 value={collabForm.title}
                 onChange={(e) => setCollabForm({ ...collabForm, title: e.target.value })}
                 required
               />
+              <small style={{ color: '#78716C', fontSize: '11.5px', marginTop: '4px', display: 'block' }}>
+                Shown on the deliverable badge pill on the card.
+              </small>
             </div>
 
-            {/* Website URL & Display Link */}
-            <div className="collab-input-group">
-              <label>Website / Project Link</label>
+            <div className="modal-form-group">
+              <label>Brand Website or Instagram Link (Optional)</label>
               <input
                 type="text"
-                className="collab-text-input"
-                placeholder="https://www.yamkitch.in/"
+                placeholder="Ex. https://brandwebsite.com or @brandhandle"
                 value={collabForm.websiteUrl}
                 onChange={(e) => setCollabForm({ ...collabForm, websiteUrl: e.target.value })}
               />
             </div>
-
-            <div className="collab-input-group">
-              <label>Display Link Text</label>
-              <input
-                type="text"
-                className="collab-text-input"
-                placeholder="yamkitch.in"
-                value={collabForm.displayUrl}
-                onChange={(e) => setCollabForm({ ...collabForm, displayUrl: e.target.value })}
-              />
-            </div>
-
-            {/* Custom CTA Button Label */}
-            <div className="collab-input-group full-width">
-              <label>Custom Dark Pill Button Text (Optional)</label>
-              <input
-                type="text"
-                className="collab-text-input"
-                placeholder="e.g. Explore Publications: lekhoktripura.in or Explore Web App: yamkitch.in"
-                value={collabForm.ctaButtonText}
-                onChange={(e) => setCollabForm({ ...collabForm, ctaButtonText: e.target.value })}
-              />
-            </div>
-
-            {/* Description */}
-            <div className="collab-input-group full-width">
-              <label>Description / Overview</label>
-              <textarea
-                className="collab-textarea-input"
-                placeholder="Write a brief overview of the project or brand collaboration..."
-                rows="3"
-                value={collabForm.description}
-                onChange={(e) => setCollabForm({ ...collabForm, description: e.target.value })}
-              />
-            </div>
-
-            {/* Tags */}
-            <div className="collab-input-group full-width">
-              <label>Tags (comma separated)</label>
-              <input
-                type="text"
-                className="collab-text-input"
-                placeholder="UI/UX Design, Responsive Web, GenWeb Tech"
-                value={collabForm.tags}
-                onChange={(e) => setCollabForm({ ...collabForm, tags: e.target.value })}
-              />
-            </div>
-
-            {/* Special Action CTA Banner Builder Box */}
-            <div className="collab-input-group full-width collab-cta-builder-box">
-              <label className="collab-checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={collabForm.hasActionCta}
-                  onChange={(e) => setCollabForm({ ...collabForm, hasActionCta: e.target.checked })}
-                />
-                <span>+ Add Bottom Action CTA Banner Box (WhatsApp / Lead Box)</span>
-              </label>
-
-              {collabForm.hasActionCta && (
-                <div className="collab-action-cta-fields">
-                  <div className="collab-input-group">
-                    <label>Action Banner Headline / Question</label>
-                    <input
-                      type="text"
-                      className="collab-text-input"
-                      placeholder="e.g. Are you an author or publisher?"
-                      value={collabForm.actionCtaTitle}
-                      onChange={(e) => setCollabForm({ ...collabForm, actionCtaTitle: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="collab-input-group">
-                    <label>Action Subtitle / Subtext</label>
-                    <input
-                      type="text"
-                      className="collab-text-input"
-                      placeholder="e.g. Promote & launch your book into a bestseller campaign."
-                      value={collabForm.actionCtaSubtitle}
-                      onChange={(e) => setCollabForm({ ...collabForm, actionCtaSubtitle: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="collab-input-group">
-                    <label>Orange CTA Button Label</label>
-                    <input
-                      type="text"
-                      className="collab-text-input"
-                      placeholder="e.g. Promote Your Book Now or Get a Professional Website"
-                      value={collabForm.actionCtaBtnText}
-                      onChange={(e) => setCollabForm({ ...collabForm, actionCtaBtnText: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="collab-input-group">
-                    <label>WhatsApp Number or Action URL</label>
-                    <input
-                      type="text"
-                      className="collab-text-input"
-                      placeholder="e.g. 8258892262 or https://wa.me/918258892262?text=..."
-                      value={collabForm.actionCtaLink}
-                      onChange={(e) => setCollabForm({ ...collabForm, actionCtaLink: e.target.value })}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Card Image Upload (Cloudinary) */}
-            <div className="collab-input-group full-width">
-              <label>
-                Card Showcase Image <span className="req">*</span>
-              </label>
-
-              <div className="collab-upload-box">
-                <div className="collab-upload-grid">
-                  <div className="upload-zone-left">
-                    <label className="collab-upload-file-btn">
-                      {uploadingCollabImage ? (
-                        <RefreshCw size={18} className="spin" />
-                      ) : (
-                        <Upload size={18} />
-                      )}
-                      <span>{uploadingCollabImage ? 'Uploading...' : 'Choose Image File'}</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleCollabImageUpload}
-                        disabled={uploadingCollabImage}
-                      />
-                    </label>
-                    <span className="collab-upload-hint">PNG, JPG, WEBP • Recommended resolution 16:9</span>
-                  </div>
-
-                  <div className="collab-or-divider">
-                    <span>OR</span>
-                  </div>
-
-                  <div className="upload-zone-right">
-                    <label className="sublabel">Enter Direct Image URL</label>
-                    <div className="collab-url-input-wrap">
-                      <ImageIcon size={18} className="collab-url-icon" />
-                      <input
-                        type="url"
-                        placeholder="https://res.cloudinary.com/..."
-                        value={collabForm.imageUrl}
-                        onChange={(e) => setCollabForm({ ...collabForm, imageUrl: e.target.value })}
-                        className="collab-text-input collab-url-input"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {collabForm.imageUrl && (
-                  <div className="collab-preview-wrap">
-                    <span className="collab-preview-label">Card Image Preview:</span>
-                    <div className="collab-img-preview-card">
-                      <img src={collabForm.imageUrl} alt="Card Preview" />
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
           </div>
 
-          <div className="collab-submit-row">
+          {/* Logo Upload Section */}
+          <div className="modal-form-group full-width">
+            <label>Brand Logo Image (PNG, JPG, WebP, AVIF | Max 10MB) *</label>
+            <div style={{ display: 'flex', gap: '14px', alignItems: 'center', flexWrap: 'wrap' }}>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleCollabImageUpload}
+                id="collab-logo-file-input"
+                style={{ display: 'none' }}
+              />
+              <label
+                htmlFor="collab-logo-file-input"
+                className="upload-trigger-btn"
+                style={{
+                  cursor: 'pointer',
+                  padding: '12px 20px',
+                  backgroundColor: '#191412',
+                  color: '#FF9F1C',
+                  borderRadius: '12px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  border: '1.5px solid rgba(255, 159, 28, 0.4)',
+                  fontWeight: '700',
+                  fontSize: '14px',
+                }}
+              >
+                {uploadingCollabImage ? <RefreshCw size={16} className="spin" /> : <Upload size={16} />}
+                <span>{uploadingCollabImage ? 'Uploading Logo...' : 'Upload Brand Logo File'}</span>
+              </label>
+
+            </div>
+
+            {/* Logo Preview */}
+            {collabForm.imageUrl && (
+              <div
+                style={{
+                  marginTop: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '20px',
+                  padding: '14px 20px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                  borderRadius: '16px',
+                  border: '1.5px solid rgba(255, 159, 28, 0.3)',
+                  width: 'fit-content',
+                }}
+              >
+                <div
+                  style={{
+                    width: '90px',
+                    height: '90px',
+                    borderRadius: '14px',
+                    backgroundColor: '#FFFFFF',
+                    border: '1px solid rgba(0, 0, 0, 0.08)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden',
+                    padding: '6px',
+                    boxShadow: '0 4px 14px rgba(0, 0, 0, 0.05)',
+                  }}
+                >
+                  <img
+                    src={collabForm.imageUrl}
+                    alt="Logo Preview"
+                    style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
+                  />
+                </div>
+                <div>
+                  <span style={{ fontSize: '13px', fontWeight: '800', color: '#16A34A', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <CheckCircle size={14} /> Logo Ready
+                  </span>
+                  <span style={{ fontSize: '12px', color: '#78716C', display: 'block', marginTop: '4px' }}>
+                    Will display centered inside the collaboration card.
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setCollabForm((prev) => ({ ...prev, imageUrl: '' }))}
+                    style={{
+                      marginTop: '6px',
+                      background: 'none',
+                      border: 'none',
+                      color: '#EF4444',
+                      fontSize: '12px',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                      padding: 0,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                    }}
+                  >
+                    <Trash2 size={12} /> Remove Logo
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="form-action-row" style={{ marginTop: '24px' }}>
             <button
               type="submit"
-              className="collab-primary-submit-btn"
+              className="publish-media-btn"
               disabled={publishingCollab || uploadingCollabImage}
+              style={{
+                backgroundColor: '#FF9F1C',
+                color: '#191412',
+                padding: '14px 28px',
+                borderRadius: '9999px',
+                fontWeight: '800',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                border: 'none',
+                cursor: 'pointer',
+              }}
             >
               {publishingCollab ? (
-                <>
-                  <RefreshCw size={18} className="spin" />
-                  <span>{collabEditingId ? 'Updating...' : 'Publishing...'}</span>
-                </>
+                <RefreshCw size={18} className="spin" />
+              ) : collabEditingId ? (
+                <Save size={18} />
               ) : (
-                <>
-                  {collabEditingId ? <Save size={18} /> : <PlusCircle size={18} />}
-                  <span>{collabEditingId ? 'Update Collab Card' : 'Publish Brand Card'}</span>
-                </>
+                <PlusCircle size={18} />
               )}
+              <span>
+                {publishingCollab
+                  ? 'Saving Collaboration...'
+                  : collabEditingId
+                  ? 'Update Collaboration Card'
+                  : 'Publish Collaboration Live'}
+              </span>
             </button>
+
+            {collabEditingId && (
+              <button
+                type="button"
+                className="cancel-edit-secondary-btn"
+                onClick={resetCollabForm}
+                style={{
+                  padding: '12px 20px',
+                  borderRadius: '9999px',
+                  border: '1px solid #78716C',
+                  background: 'transparent',
+                  color: '#78716C',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                }}
+              >
+                Cancel
+              </button>
+            )}
           </div>
         </form>
       </div>
 
-      {/* Published Collab Cards List Grid */}
-      <div className="collab-list-section">
-        <h3 className="collab-list-title">
-          <Sparkles size={20} style={{ color: '#FF9F1C' }} />
-          <span>Live Brand Collaboration Cards ({collabsList.length})</span>
-        </h3>
+      {/* Published Collaborations List */}
+      <div className="published-media-section" style={{ marginTop: '40px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '14px' }}>
+          <div>
+            <h3 style={{ fontSize: '20px', fontWeight: '800', margin: 0, color: '#191412' }}>
+              Published Brand Collaborations ({collabsList.length})
+            </h3>
+            <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#78716C' }}>
+              These brand cards render dynamically on the Collabs page alongside default partners.
+            </p>
+          </div>
+
+          {collabsList.length > 3 && (
+            <input
+              type="text"
+              placeholder="Search collaborations..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{
+                padding: '8px 16px',
+                borderRadius: '9999px',
+                border: '1px solid rgba(0, 0, 0, 0.12)',
+                fontSize: '13px',
+                minWidth: '220px',
+              }}
+            />
+          )}
+        </div>
 
         {collabsList.length === 0 ? (
-          <div className="empty-state-box">
-            <Sparkles size={40} />
-            <p>No custom brand cards added yet. Create your first card above to showcase it live on the Collabs page!</p>
+          <div className="empty-state-box" style={{ padding: '48px 24px', textAlign: 'center', backgroundColor: '#FFFFFF', borderRadius: '20px', border: '1.5px dashed rgba(255, 159, 28, 0.4)' }}>
+            <Sparkles size={40} style={{ color: '#FF9F1C', margin: '0 auto 12px' }} />
+            <h4 style={{ fontSize: '17px', fontWeight: '800', margin: '0 0 6px', color: '#191412' }}>No Custom Collaborations Added Yet</h4>
+            <p style={{ fontSize: '14px', color: '#78716C', margin: 0 }}>
+              Use the form above to add new brand collaborations. They will instantly appear on your live Collabs page!
+            </p>
           </div>
         ) : (
-          <div className="collab-cards-grid">
-            {collabsList.map((item) => (
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+              gap: '20px',
+            }}
+          >
+            {filteredCollabs.map((item) => (
               <div
                 key={item._id}
-                className={`collab-admin-card ${collabEditingId === item._id ? 'is-being-edited' : ''}`}
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  borderRadius: '18px',
+                  border: collabEditingId === item._id ? '2px solid #FF9F1C' : '1px solid rgba(0, 0, 0, 0.08)',
+                  padding: '20px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '14px',
+                  boxShadow: '0 4px 18px rgba(0, 0, 0, 0.04)',
+                }}
               >
-                <div className="collab-card-media">
-                  <img src={item.imageUrl} alt={item.title} />
-                  <span className="collab-card-category-tag">{item.category}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <div
+                    style={{
+                      width: '68px',
+                      height: '68px',
+                      borderRadius: '12px',
+                      backgroundColor: '#FAFAF8',
+                      border: '1px solid rgba(0, 0, 0, 0.06)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      overflow: 'hidden',
+                      padding: '4px',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <img
+                      src={item.imageUrl}
+                      alt={item.brandName}
+                      style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }}
+                    />
+                  </div>
+
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <h4 style={{ fontSize: '16px', fontWeight: '800', margin: '0 0 4px', color: '#191412', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {item.brandName}
+                    </h4>
+                    <span style={{ fontSize: '12.5px', fontWeight: '600', color: '#78716C', display: 'block' }}>
+                      {item.category}
+                    </span>
+                  </div>
                 </div>
 
-                <div className="collab-card-content">
-                  <span className="collab-card-brand">{item.brandName}</span>
-                  <h4 className="collab-card-headline">{item.title}</h4>
-                  <p className="collab-card-description">{item.description}</p>
+                {item.title && (
+                  <div
+                    style={{
+                      backgroundColor: 'rgba(255, 159, 28, 0.1)',
+                      border: '1px solid rgba(255, 159, 28, 0.25)',
+                      padding: '4px 12px',
+                      borderRadius: '9999px',
+                      fontSize: '11.5px',
+                      fontWeight: '700',
+                      color: '#D97706',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {item.title}
+                  </div>
+                )}
 
-                  {item.tags && item.tags.length > 0 && (
-                    <div className="collab-card-tags">
-                      {item.tags.map((t, idx) => (
-                        <span key={idx} className="collab-card-tag-pill">
-                          {t}
-                        </span>
-                      ))}
-                    </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', paddingTop: '10px', borderTop: '1px solid rgba(0, 0, 0, 0.06)' }}>
+                  {item.websiteUrl && item.websiteUrl !== '#' ? (
+                    <a
+                      href={item.websiteUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{ fontSize: '12px', color: '#FF9F1C', textDecoration: 'none', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      <span>Visit</span>
+                      <ExternalLink size={12} />
+                    </a>
+                  ) : (
+                    <span style={{ fontSize: '11.5px', color: '#A8A29E' }}>No external link</span>
                   )}
 
-                  <div className="collab-card-actions">
+                  <div style={{ display: 'flex', gap: '8px' }}>
                     <button
                       type="button"
-                      className="collab-card-edit-btn"
                       onClick={() => handleEditCollab(item)}
+                      style={{
+                        backgroundColor: 'rgba(255, 159, 28, 0.1)',
+                        border: '1px solid rgba(255, 159, 28, 0.3)',
+                        color: '#FF9F1C',
+                        padding: '6px 12px',
+                        borderRadius: '8px',
+                        fontSize: '12px',
+                        fontWeight: '700',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                      title="Edit"
                     >
-                      <Edit3 size={14} /> Edit
+                      <Edit3 size={13} /> Edit
                     </button>
-
                     <button
                       type="button"
-                      className="collab-card-delete-btn"
-                      onClick={() => handleDeleteCollab(item._id)}
+                      onClick={() => handleDeleteCollab(item._id, item.brandName)}
+                      style={{
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        border: '1px solid rgba(239, 68, 68, 0.3)',
+                        color: '#EF4444',
+                        padding: '6px 12px',
+                        borderRadius: '8px',
+                        fontSize: '12px',
+                        fontWeight: '700',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                      title="Delete"
                     >
-                      <Trash2 size={14} /> Delete
+                      <Trash2 size={13} /> Delete
                     </button>
                   </div>
                 </div>

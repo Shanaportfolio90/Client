@@ -25,7 +25,6 @@ export default function Navbar({ isDarkMode, toggleDarkMode, activePage }) {
     { name: 'Home', path: '/' },
     { name: 'Collabs', path: '/collabs' },
     { name: 'Blogs', path: '/blogs' },
-    { name: 'Shorts Series', path: '/#series' },
     { name: 'Promotions', path: '/#book-promo' },
     { name: 'About Me', path: '/#about' },
   ];
